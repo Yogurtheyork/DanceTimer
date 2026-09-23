@@ -9,10 +9,10 @@
 ## 開發方式
 
 1. Windows / WSL / Linux：編輯 `TimerCam/Sources`、文件，使用 Git / GitHub 交接。
-2. Mac：依 [Xcode 建立步驟](docs/XCODE_SETUP.md) 建立正式 iOS App project，加入原始碼。
+2. Mac：clone 後直接開啟 `TimerCam.xcodeproj`，依 [Xcode 設定步驟](docs/XCODE_SETUP.md) 選擇簽署 Team 後執行。
 3. 實體 iPhone：依 [驗收清單](docs/DEVICE_TESTS.md) 測試相機、權限、時間、聲音與中斷，再拍截圖與作業展示影片。
 
-目前環境沒有 Swift / Xcode，因此尚未通過 Apple SDK 編譯或 iPhone 實測，不能視為可直接上架的已驗證版本。沒有預先產生 `.xcodeproj`，讓你在 Mac 用 Xcode 正式建立。
+`TimerCam.xcodeproj` 是在沒有 Xcode 的環境手寫產生，尚未通過 Apple SDK 編譯或 iPhone 實測，不能視為可直接上架的已驗證版本。第一次開啟若有設定問題，以 Xcode 提示修正後再 commit。
 
 ## 檔案
 

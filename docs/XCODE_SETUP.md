@@ -1,36 +1,37 @@
-# 在 Mac 建立 Xcode 專案
+# 在 Mac 開啟 Xcode 專案
 
-## 1. 建立專案
+## 1. 開啟專案
 
-1. 在 Mac 安裝可支援 iOS 17 或更新版的 Xcode，取得本資料夾（GitHub clone 或複製）。
-2. Xcode → File → New → Project → iOS → App。
-3. Product Name：`TimerCam`；Interface：SwiftUI；Language：Swift；Storage：None。選擇自己的 Team 與 Organization Identifier。
-4. 將專案放在 repository 的 `Xcode/` 子資料夾，避免覆蓋現有原始碼。
-5. 移除新專案自動生成的 `ContentView.swift` 與 `TimerCamApp.swift`，避免重複 App 入口。
-6. File → Add Files to “TimerCam”… → 選取此 repository 的 `TimerCam/Sources` 中四個 Swift 檔。建議引用原檔、不勾 Copy items if needed；確認加入 TimerCam target。若選擇複製，日後應以 Xcode 中那份為準，避免維護兩份。
-7. 保留 Xcode 自動產生的 Assets.xcassets。
+1. 在 Mac 安裝可支援 iOS 17 或更新版的 Xcode。
+2. Xcode → File → Clone Repository…，貼上 `https://github.com/Yogurtheyork/TimerCam.git`；或用終端機 `git clone`。
+3. 開啟 repository 根目錄的 `TimerCam.xcodeproj`。
 
-## 2. Target 與編譯設定
+專案已包含：`TimerCam/Sources` 四個 Swift 檔、`TimerCam/Assets.xcassets`（空白 AppIcon），以及共用的 TimerCam scheme。
 
-- Target → General → Minimum Deployments：iOS 17.0 或更新。
-- Supported Destinations：iPhone；第一版取消 iPad 與 Mac 支援。
-- iPhone Orientation：僅 Portrait（取消 Landscape 與 Upside Down）。預覽與影片目前固定直向。
-- Signing & Capabilities：選擇 Team，啟用 Automatically manage signing，使用唯一 Bundle Identifier。
-- Build Settings → Swift Language Version：**Swift 5**。
-- 若 Xcode 有 Default Actor Isolation 設定，設為 **Nonisolated**；這份程式以主執行緒 UI 與序列相機佇列分工，未採 Swift 6 預設 MainActor 隔離。
-- 不需要 Background Modes、網路權限、第三方套件或 API key。
+## 2. 簽署（第一次必做）
 
-## 3. 加入三個隱私用途字串（必要）
+- 點左側藍色 TimerCam 專案 → Target TimerCam → Signing & Capabilities。
+- Team：選擇自己的 Apple ID / Team。
+- Bundle Identifier 預設為 `com.yogurtheyork.TimerCam`；若顯示已被使用，改成自己唯一的值。
 
-Target → Info → Custom iOS Target Properties，按 + 新增以下項目。Xcode 使用自動產生 Info.plist 即可，無須另外拖入一份 plist。
+## 3. 專案內已預設的設定
 
-| Xcode 顯示名稱 / 原始 key | Type | Value |
-| --- | --- | --- |
-| Privacy - Camera Usage Description / `NSCameraUsageDescription` | String | 使用相機定時錄製影片，並顯示取景畫面。 |
-| Privacy - Microphone Usage Description / `NSMicrophoneUsageDescription` | String | 在錄影時收錄現場聲音。 |
-| Privacy - Photo Library Additions Usage Description / `NSPhotoLibraryAddUsageDescription` | String | 將你選擇的影片儲存到相簿。 |
+以下已寫在專案檔中，一般不需要改，僅供檢查：
 
-缺少相機或麥克風用途說明會在存取時造成 App 終止。只需新增相簿權限，不要額外要求讀取整個相簿。
+- Minimum Deployments：iOS 17.0；Supported Destinations：僅 iPhone；Orientation：僅 Portrait。
+- Swift Language Version：**Swift 5**。
+- Default Actor Isolation：**nonisolated**（Xcode 26 才有此設定；舊版 Xcode 會忽略）。這份程式以主執行緒 UI 與序列相機佇列分工，未採 Swift 6 預設 MainActor 隔離。
+- 自動產生 Info.plist，並包含三個隱私用途字串：
+
+| Xcode 顯示名稱 / 原始 key | Value |
+| --- | --- |
+| Privacy - Camera Usage Description / `NSCameraUsageDescription` | 使用相機定時錄製影片，並顯示取景畫面。 |
+| Privacy - Microphone Usage Description / `NSMicrophoneUsageDescription` | 在錄影時收錄現場聲音。 |
+| Privacy - Photo Library Additions Usage Description / `NSPhotoLibraryAddUsageDescription` | 將你選擇的影片儲存到相簿。 |
+
+缺少相機或麥克風用途說明會在存取時造成 App 終止；可在 Target → Info 確認。不需要 Background Modes、網路權限、第三方套件或 API key。
+
+若 Xcode 開啟專案時提示「Update to recommended settings」，可以接受，再把變更 commit 回 repository。
 
 ## 4. 編譯與實機執行
 
