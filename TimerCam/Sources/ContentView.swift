@@ -16,14 +16,14 @@ struct ContentView: View {
                         if model.phase == .idle || model.phase == .preparing {
                             VStack(spacing: 12) {
                                 Image(systemName: "camera.fill").font(.largeTitle)
-                                Text(model.phase == .preparing ? "正在啟動相機…" : "準備好你的下一個回合")
-                                Text("使用後置相機與麥克風錄製練舞影片")
+                                Text(model.phase == .preparing ? "正在啟動相機…" : "準備好下一段拍攝")
+                                Text("使用後置相機與麥克風定時錄影")
                                     .font(.caption)
                             }
                         } else if model.phase == .countdown {
                             Text(model.cue).font(.system(size: 72, weight: .black, design: .rounded))
                                 .minimumScaleFactor(0.4).padding()
-                                .accessibilityLabel("進場倒數 \(model.cue)")
+                                .accessibilityLabel("開拍倒數 \(model.cue)")
                         } else if model.phase == .recording {
                             VStack {
                                 Label("錄影中", systemImage: "record.circle.fill").foregroundStyle(.red)
@@ -57,7 +57,7 @@ struct ContentView: View {
                                 .frame(width: 90).textFieldStyle(.roundedBorder)
                         }
                         Divider()
-                        Text("進場倒數").font(.headline)
+                        Text("開拍倒數").font(.headline)
                         Stepper("就位時間：\(model.preparation) 秒", value: $model.preparation, in: 0...20)
                         Picker("3、2、1 的速度", selection: $model.fastBeat) {
                             Text("快 · 0.4 秒").tag(0.4)
@@ -74,7 +74,7 @@ struct ContentView: View {
                         Button("啟用相機與麥克風") { Task { await model.enableCamera() } }
                             .buttonStyle(PrimaryButtonStyle())
                     } else if model.phase == .ready {
-                        Button("開始進場倒數") {
+                        Button("開始倒數") {
                             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                             model.start()
                         }
@@ -89,7 +89,7 @@ struct ContentView: View {
 
                     if !model.clips.isEmpty {
                         VStack(alignment: .leading, spacing: 12) {
-                            Text("練習影片").font(.title2.bold())
+                            Text("已錄影片").font(.title2.bold())
                             ForEach(model.clips, id: \.self) { url in
                                 Button {
                                     model.deactivate()
@@ -103,7 +103,7 @@ struct ContentView: View {
                     }
                 }.padding()
             }
-            .navigationTitle("Dance Timer")
+            .navigationTitle("Timer Cam")
             .background(Color(uiColor: .systemGroupedBackground))
             .sheet(item: $selectedClip) { clip in
                 PlaybackView(url: clip.url, model: model)
@@ -168,7 +168,7 @@ private struct PlaybackView: View {
                 Text("只有儲存時才會要求新增至相簿的權限。")
                     .font(.footnote).foregroundStyle(.secondary)
             }.padding()
-                .navigationTitle("回合回放")
+                .navigationTitle("影片回放")
                 .toolbar { Button("完成") { dismiss() }.disabled(model.saving) }
                 .interactiveDismissDisabled(model.saving)
                 .onDisappear { player.pause() }

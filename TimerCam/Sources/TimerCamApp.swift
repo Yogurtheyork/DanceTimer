@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct DanceTimerApp: App {
+struct TimerCamApp: App {
     var body: some Scene {
         WindowGroup { ContentView() }
     }

@@ -75,7 +75,7 @@ final class RecorderModel: ObservableObject {
             guard granted else {
                 phase = .idle
                 needsSettings = status != .restricted
-                message = type == .video ? "需要相機權限才能錄製練舞影片。請到設定允許相機存取。" : "需要麥克風權限才能收錄現場聲音。請到設定允許麥克風存取。"
+                message = type == .video ? "需要相機權限才能錄影。請到設定允許相機存取。" : "需要麥克風權限才能收錄現場聲音。請到設定允許麥克風存取。"
                 return
             }
         }

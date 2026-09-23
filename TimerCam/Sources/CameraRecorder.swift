@@ -5,7 +5,7 @@ import Foundation
 // Use Swift 5 language mode and Nonisolated default actor isolation (see README).
 final class CameraRecorder: NSObject, AVCaptureFileOutputRecordingDelegate {
     let session = AVCaptureSession()
-    private let queue = DispatchQueue(label: "dance.camera")
+    private let queue = DispatchQueue(label: "timercam.camera")
     private let output = AVCaptureMovieFileOutput()
     private var configured = false
     private var observers: [NSObjectProtocol] = []

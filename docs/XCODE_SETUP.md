@@ -4,10 +4,10 @@
 
 1. 在 Mac 安裝可支援 iOS 17 或更新版的 Xcode，取得本資料夾（GitHub clone 或複製）。
 2. Xcode → File → New → Project → iOS → App。
-3. Product Name：`DanceTimer`；Interface：SwiftUI；Language：Swift；Storage：None。選擇自己的 Team 與 Organization Identifier。
+3. Product Name：`TimerCam`；Interface：SwiftUI；Language：Swift；Storage：None。選擇自己的 Team 與 Organization Identifier。
 4. 將專案放在 repository 的 `Xcode/` 子資料夾，避免覆蓋現有原始碼。
-5. 移除新專案自動生成的 `ContentView.swift` 與 `DanceTimerApp.swift`，避免重複 App 入口。
-6. File → Add Files to “DanceTimer”… → 選取此 repository 的 `DanceTimer/Sources` 中四個 Swift 檔。建議引用原檔、不勾 Copy items if needed；確認加入 DanceTimer target。若選擇複製，日後應以 Xcode 中那份為準，避免維護兩份。
+5. 移除新專案自動生成的 `ContentView.swift` 與 `TimerCamApp.swift`，避免重複 App 入口。
+6. File → Add Files to “TimerCam”… → 選取此 repository 的 `TimerCam/Sources` 中四個 Swift 檔。建議引用原檔、不勾 Copy items if needed；確認加入 TimerCam target。若選擇複製，日後應以 Xcode 中那份為準，避免維護兩份。
 7. 保留 Xcode 自動產生的 Assets.xcassets。
 
 ## 2. Target 與編譯設定
@@ -26,9 +26,9 @@ Target → Info → Custom iOS Target Properties，按 + 新增以下項目。Xc
 
 | Xcode 顯示名稱 / 原始 key | Type | Value |
 | --- | --- | --- |
-| Privacy - Camera Usage Description / `NSCameraUsageDescription` | String | 使用相機錄製你的街舞練習影片，並顯示取景畫面。 |
-| Privacy - Microphone Usage Description / `NSMicrophoneUsageDescription` | String | 在練舞錄影時收錄現場音樂與聲音。 |
-| Privacy - Photo Library Additions Usage Description / `NSPhotoLibraryAddUsageDescription` | String | 將你選擇的練舞影片儲存到相簿。 |
+| Privacy - Camera Usage Description / `NSCameraUsageDescription` | String | 使用相機定時錄製影片，並顯示取景畫面。 |
+| Privacy - Microphone Usage Description / `NSMicrophoneUsageDescription` | String | 在錄影時收錄現場聲音。 |
+| Privacy - Photo Library Additions Usage Description / `NSPhotoLibraryAddUsageDescription` | String | 將你選擇的影片儲存到相簿。 |
 
 缺少相機或麥克風用途說明會在存取時造成 App 終止。只需新增相簿權限，不要額外要求讀取整個相簿。
 
@@ -43,6 +43,6 @@ Target → Info → Custom iOS Target Properties，按 + 新增以下項目。Xc
 ## 5. 作業展示與後續上架
 
 - 截圖：時間設定、倒數、錄影中、回放、權限說明畫面。
-- 展示影片：設定短片時長 → 進場 → 自動開始與停止 → 回放 → 儲存到相簿。
+- 展示影片：設定短片時長 → 倒數 → 自動開始與停止 → 回放 → 儲存到相簿。
 - App Icon：在 Assets 的 AppIcon 補上自己的圖示；本版尚未提供。
 - 上架另需 Apple Developer Program、App Store Connect 資料與隱私政策等；以提交時的 Apple 要求為準。
