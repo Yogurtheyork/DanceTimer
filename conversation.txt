@@ -4,7 +4,7 @@ TimerCam AI 開發紀錄
 專案：Timer Cam（原名 Dance Timer）— 定時錄影 iOS App（SwiftUI）
 Repo：https://github.com/Yogurtheyork/TimerCam（原 repo 名稱 DanceTimer）
 AI 工具：Claude Code（CLI，Linux / WSL2 環境，無 Mac、無 Xcode、無 Swift 編譯器）
-整理日期：2026-09-24
+整理日期：2026-09-24（15:05 初版；之後補上 v4 修正、v5 介紹頁與本機圖片）
 
 時間均為台灣時間（UTC+8）。
 
@@ -14,11 +14,13 @@ AI 工具：Claude Code（CLI，Linux / WSL2 環境，無 Mac、無 Xcode、無 
 
 本紀錄只使用以下實際存在的資料，沒有補寫或推測任何對話內容：
 
-  1. Git commit 紀錄（git log），共 5 個 commit。
+  1. Git commit 紀錄（git log），共 8 個 commit。
   2. Claude Code 本機對話紀錄（~/.claude/projects/-home-york-projects-iOS/*.jsonl），共 3 個 session：
      - Session A  be8ebf13…  2026-09-23 11:35–12:06  改名 Timer Cam、repo 改名、產生 Xcode 專案、實機測試說明
      - Session B  f6530a29…  2026-09-24 14:39–14:44  設定 App icon
      - Session C  ab0cd508…  2026-09-24 14:22 起    相機式介面、英文化與字型、pbxproj 修正、本份紀錄
+  3. Session D  0783dbc8…  2026-09-24 15:40 前後  檢查圖片作業、新增 TimerCamLogo 本機圖片、更新本份紀錄
+     （由該 session 直接依自身對話內容整理，未另外擷取紀錄檔）
 
 【缺少】2026-09-20 建立 Dance Timer 的原始對話（commit 4524cf9）。
   - 本機 Claude Code 對話紀錄中找不到這段 session，也沒有對話摘要可參考。
@@ -27,6 +29,9 @@ AI 工具：Claude Code（CLI，Linux / WSL2 環境，無 Mac、無 Xcode、無 
   - 如果這段對話是在其他工具或其他電腦（例如 claude.ai 網頁版、ChatGPT）進行，需要你自行從那邊匯出補上。
 
 【缺少】Session B 使用者貼上的 icon 原圖不在 repo 內，只保留處理後的 AppIcon.png。
+
+【缺少】15:05 之後 Session B、Session C 的對話原文，包含 15:13 pbxproj 修正 commit、15:33 第一次開啟介紹頁（546d9ac）
+  的需求與討論。更新本紀錄時沒有取得讀取這些紀錄檔的權限，因此這兩段只根據 commit 內容描述。
 
 【省略】對話中 AI 執行的工具指令（讀檔、改檔、git 等）與其輸出沒有收錄，只保留雙方的文字訊息。
 
@@ -42,11 +47,13 @@ checkout 分支即可切換到該版本展示。
   version/v1-dance-timer        4524cf9  2026-09-20 12:11  初版 Dance Timer：街舞定時錄影（無 Xcode 專案檔）
   version/v2-timer-cam-xcode    ff62b6a  2026-09-23 11:50  改名 Timer Cam、移除街舞字眼、加入 .xcodeproj
   version/v3-camera-ui          c702edf  2026-09-24 14:41  相機式介面：左下歷史錄影、中間錄影鍵、右下設定；App icon
-  main（最新）                  773f320  2026-09-24 14:52  介面全英文、Playwrite BE WAL Guides 字型
-                                                            ※ 此 commit 的 project.pbxproj 有格式錯誤，修正尚未 commit（見第三節 v4）
+  version/v4-english-font       502e67a  2026-09-24 15:13  介面全英文、Playwrite BE WAL Guides 字型（含 pbxproj 修正）
+  main（最新）                  0e3e29a  2026-09-24 15:43  第一次開啟介紹頁（網路照片）＋ TimerCamLogo 本機圖片
 
 未另外開分支的 commit：
   6f648fc  2026-09-23 11:37  只有改名與文字調整，15 分鐘後的 ff62b6a 已包含，併入 v2。
+  773f320  2026-09-24 14:52  字型與英文化，但 pbxproj 有格式錯誤；v4 分支改指向修正後的 502e67a。
+  546d9ac  2026-09-24 15:33  介紹頁（網路照片），10 分鐘後的 0e3e29a 已包含，併入 v5（main）。
 
 注意：
   - v1 沒有 .xcodeproj，要依當時的 docs/XCODE_SETUP.md 在 Mac 上手動建立專案才能執行。
@@ -158,8 +165,32 @@ checkout 分支即可切換到該版本展示。
            結果兩處都被插入。當時沒有再用解析工具驗證（v2 時有做）。
      修正：刪除 Products 群組內的兩行，恢復縮排；用 openstep 解析器確認整個檔案可正確解析，
            每個群組與建置階段引用的項目都存在，字型與 OFL.txt 各只出現在應有的位置。
-     狀態：【修正尚未 commit】GitHub 上 main（773f320）仍是有錯誤的版本。
-           commit 後建議再建立 version/v4-english-font 分支指向修正後的 commit。
+     狀態：15:13 與初版 conversation.txt 一起 commit 為 502e67a，並建立 version/v4-english-font 分支指向它。
+
+
+■ v5 — 介紹頁：網路圖片與本機圖片（2026-09-24，commit 546d9ac、0e3e29a）
+
+  1. 15:33  commit 546d9ac「Add first-launch intro with remote dance photos」
+     需求 / Prompt、AI 建議：【缺少原始對話，見第一節】
+     實作內容（依 commit 內容）：
+       - 新增 IntroView.swift：第一次開啟 App 時顯示三頁介紹（Timed recording／Countdown／Review and save），
+         看過後以 @AppStorage("hasSeenIntro") 記錄，不再顯示；可按 Skip 跳過。
+       - 每頁以 AsyncImage 從 Wikimedia Commons 載入一張舞者照片（CC0／Public domain），
+         載入中顯示 ProgressView，失敗顯示 wifi.exclamationmark 圖示與「Try again」按鈕（變更 .id 重新請求）。
+       - README 列出三張照片的來源與授權；DEVICE_TESTS 新增一項驗收；ContentView 加入介紹頁判斷；pbxproj 加入新檔案。
+
+  2. Session D  需求：檢查圖片作業是否完成（App icon 是否換成原圖、TimerCamLogo.imageset、本機與網路圖片）。
+     AI 檢查結果：四項都未完成；AppIcon.png 自 c702edf 後沒有變動；Assets.xcassets 只有 AppIcon；
+       AsyncImage 只在 IntroView 的介紹頁；546d9ac 尚未 push。
+     使用者決定：不替換 App icon、不重新製作圖片，保留 IntroView 所有網路照片，只完成本機圖片要求。
+
+  3. Session D  實作（commit 0e3e29a，與 546d9ac 一起 push 到 GitHub main）：
+       - 直接複製現有 AppIcon.png 為 Assets.xcassets/TimerCamLogo.imageset/TimerCamLogo.png（md5 相同），
+         並建立 Contents.json（universal）。
+       - IntroView 頂端新增標題列：Image("TimerCamLogo")（36pt 圓角）＋「Timer Cam」。
+       - README 新增「圖片實作」段落，說明本機與網路圖片。
+       - Assets.xcassets 在專案中是資料夾引用，新 imageset 自動編入，不需修改 project.pbxproj。
+     限制：未經 Xcode 編譯或實機測試。
 
 
 四、各版本 App 截圖清單
@@ -202,7 +233,7 @@ v3 相機式介面（version/v3-camera-ui）
   [ ] 3-10 主畫面左下角顯示最新影片縮圖                          實機
   [ ] 3-11 主畫面上的 App icon                                   實機或模擬器
 
-v4 英文與字型（main，需先 commit pbxproj 修正）
+v4 英文與字型（version/v4-english-font）
   [ ] 4-1 英文主畫面，確認 Playwrite 字型已載入（不是系統字型）  模擬器可
   [ ] 4-2 英文權限說明對話框（相機、麥克風、相簿）              實機
   [ ] 4-3 倒數大字（Get ready 3、5-4-3-2-1），確認格線效果      實機
@@ -212,9 +243,16 @@ v4 英文與字型（main，需先 commit pbxproj 修正）
   [ ] 4-7 Playback 與「Video saved to your photo library.」提示  實機
   [ ] 4-8 大字級（動態字級）下的主畫面與設定頁                  模擬器可
 
+v5 介紹頁與圖片（main）
+  [ ] 5-1 介紹頁第 1 頁：頂端 TimerCamLogo 本機圖片＋「Timer Cam」標題    模擬器可
+  [ ] 5-2 介紹頁網路照片載入中（轉圈）                                  模擬器可（可用 Network Link Conditioner 放慢）
+  [ ] 5-3 介紹頁網路照片載入成功（三頁各一張）                          模擬器可
+  [ ] 5-4 網路照片載入失敗（關閉網路）與「Try again」按鈕               模擬器可
+  [ ] 5-5 按 Get started／Skip 後進入相機主畫面，重開 App 不再顯示介紹頁  模擬器可
+
 展示影片
   [ ] 最新版完整流程：設定短片時長 → 倒數 → 自動開始與停止 → 回放 → 儲存到相簿（實機螢幕錄影）
-  [ ] （選擇性）v1 → v4 介面演進對照
+  [ ] （選擇性）v1 → v5 介面演進對照
 
 
 五、原始對話紀錄
@@ -751,3 +789,96 @@ Now writing `conversation.txt`: a hand-written summary and screenshot list, foll
 --- [2026-09-24 15:05:02] AI
 Before generating the appendix, checking my v1 descriptions against the actual `4524cf9` contents:
 
+
+【缺少】Session C 15:05 之後、Session B 14:42 之後的對話原文（見第一節）。
+
+
+======================================================================
+Session D（0783dbc8-66d0-4203-abe3-eb81221ae1ed）— 檢查圖片作業、新增 TimerCamLogo 本機圖片、更新本份紀錄
+======================================================================
+
+說明：此段由 Session D 依自身對話內容整理，不是從紀錄檔自動擷取。使用者訊息與 AI 回覆皆為原文，省略工具指令與輸出。沒有逐則時間，只能以 commit 0e3e29a（15:43）為參考。
+
+--- 使用者
+<貼上的內容>
+請檢查目前 TimerCam 工作目錄和 GitHub main 的差異。
+確認我剛剛提供的原始圖片是否已直接覆蓋 AppIcon.png，並確認是否已新增 TimerCamLogo.imageset，以及在 Settings 頁實際顯示本機圖片和使用 AsyncImage 載入網路圖片。
+請先執行 git status、git branch --show-current 和 git log -3，列出尚未提交或尚未推送的變更。不要重新生成圖片，也不要覆蓋其他未完成的修改。
+如果圖片功能尚未完成，請先告訴我缺少哪些部分。
+</貼上的內容>
+
+--- AI
+I checked the working directory and GitHub, and none of the image work has been done. I didn't change any files.
+
+## Git status
+
+- **`git branch --show-current`**: `main`
+- **`git log -3`**:
+  - `546d9ac` Add first-launch intro with remote dance photos
+  - `502e67a` Fix project.pbxproj Products group and add AI development log
+  - `773f320` Switch app to English and Playwrite BE WAL Guides font
+- **Not pushed yet**: local `main` is 1 commit ahead of `origin/main` and 0 behind. The unpushed commit is `546d9ac`, which adds `IntroView.swift`, the README and the device test notes.
+- **Not committed yet**: there are no modified tracked files and no stash. The only extra file is the untracked `conversation.txt.save`, which looks like a backup of the AI development log. I left it alone.
+
+## The image items
+
+| Item | Status |
+|---|---|
+| Your original image replacing `AppIcon.png` | ❌ **Not done.** `AppIcon.png` hasn't changed since commit `c702edf`. The file is 1024×1024 RGB with md5 `d3c41c71…`, and the working copy matches the committed one. |
+| New `TimerCamLogo.imageset` | ❌ **Doesn't exist.** `Assets.xcassets` only has `AppIcon.appiconset` and `Contents.json`. |
+| Settings page shows the local image | ❌ **Not done.** `SettingsView` (`TimerCam/Sources/ContentView.swift:159`) only has the "Recording length" and "Countdown" sections, with no `Image(...)`. |
+| Settings page loads an online image with `AsyncImage` | ❌ **Not done.** The only `AsyncImage` in the app is in `IntroView.swift:74`, the first-launch intro. The Settings page doesn't use it. |
+
+## What's missing
+
+1. **The original image file.** You mentioned giving me an image, but no image came through in this conversation. The only image in the repo is the existing `AppIcon.png`, and there are no new images in your home directory either. Please send the file's path, or put it in the project folder.
+2. Once I have it: replace `AppIcon.appiconset/AppIcon.png` with it. It has to be 1024×1024 with no transparency, or App Store validation will fail.
+3. Create `Assets.xcassets/TimerCamLogo.imageset/`, containing the image and a `Contents.json`.
+4. Add a section to `SettingsView` that shows `Image("TimerCamLogo")`.
+5. Add an `AsyncImage` to `SettingsView` that loads an online image. I need the image's URL, and it should have loading and error states like the intro page's.
+
+To finish this, send me the image's path and the URL for the online image. I won't regenerate the image, and I won't touch `conversation.txt.save` or your other changes. Also, do you want me to push `546d9ac`, which isn't pushed yet, along with this work?
+
+--- 使用者
+<貼上的內容>
+不需要替換目前的 App Icon，也不需要重新製作任何圖片。
+
+請保留現有 AppIcon.png，以及 IntroView.swift 中的所有網路照片。
+
+現在只需要完成本機圖片的作業要求：
+1. 直接複製目前的 AppIcon.png，建立 Assets.xcassets/TimerCamLogo.imageset。
+2. 建立正確的 Contents.json。
+3. 在 IntroView 的 App 標題附近顯示 Image("TimerCamLogo")。
+4. 確認 IntroView 原本的 AsyncImage 有正常的載入中及失敗提示。
+5. 不修改相機、錄影、倒數及其他現有功能。
+6. 更新 README，記錄本機與網路圖片的實作。
+
+完成後，確認 git diff、檢查 Xcode 資源引用，將變更 Commit，並連同尚未推送的 546d9ac 一起 Push 到 GitHub main。
+請保留 conversation.txt.save，不要刪除或提交它。
+</貼上的內容>
+
+--- AI
+The intro screen now shows the local image next to the app title. The changes are committed and pushed to GitHub `main`, together with `546d9ac`. Nothing has been compiled or run, because there's no Xcode or Swift compiler here, so it still needs a test on a Mac.
+
+**Your list:**
+1. **Image set**: I copied the existing `AppIcon.png` to `Assets.xcassets/TimerCamLogo.imageset/TimerCamLogo.png`. The two files have the same md5, so it's an exact copy and no image was made.
+2. **`Contents.json`**: it's a universal image with the filename above, and it parses as valid JSON.
+3. **Showing the logo**: IntroView had no app title, so I added a title row at the top of the screen. It's a 36pt `Image("TimerCamLogo")` with rounded corners, next to the text "Timer Cam". The "Skip" button stays in the top-right corner.
+4. **`AsyncImage`**: I didn't change it. It already shows a loading spinner (`ProgressView`), and on failure it shows a `wifi.exclamationmark` icon with a "Try again" button that reloads the photo. All three online photos are unchanged.
+5. **Other features**: the camera, recording, countdown, `AppIcon.png` and `ContentView.swift` are unchanged. The only files touched are `IntroView.swift`, `README.md` and the new image set.
+6. **README**: there's a new "圖片實作" section covering how the local and online images are implemented.
+
+**Xcode resource reference:** `Assets.xcassets` is added to the project as a whole folder and is already in the Resources build phase. Xcode picks up the new image set automatically, so `project.pbxproj` didn't need changes.
+
+**Git status:**
+- The new commit is `0e3e29a`, "Show local TimerCamLogo asset on the intro screen".
+- `main` now matches `origin/main`, so nothing is left to push.
+- `conversation.txt.save` is still there and wasn't committed.
+
+**Still to check on a Mac:** the build succeeds, the logo appears at the top of the intro screen, and the offline "Try again" prompt works.
+
+--- 使用者
+好 幫我整理 conversation txt 發佈到 repo 上面
+
+--- AI
+（本則回覆即為此次更新：補上 v4 修正狀態、version/v4-english-font 分支、v5 介紹頁與本機圖片、v5 截圖清單及本段對話。）
