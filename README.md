@@ -17,7 +17,7 @@
 ## 檔案
 
 - `TimerCamApp.swift`：App 入口。
-- `ContentView.swift`：設定、相機預覽與回放。
+- `ContentView.swift`：全螢幕相機介面（左下歷史錄影、中間錄影鍵、右下設定）、設定頁與回放。
 - `RecorderModel.swift`：權限、倒數、錄影狀態、相簿儲存。
 - `CameraRecorder.swift`：背景序列佇列操作相機、影片時長限制與錄影回呼。
 
