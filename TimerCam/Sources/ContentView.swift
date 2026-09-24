@@ -7,6 +7,7 @@ struct ContentView: View {
     @State private var showHistory = false
     @State private var showSettings = false
     @State private var resumeAfterHistory = false
+    @AppStorage("hasSeenIntro") private var hasSeenIntro = false
 
     var body: some View {
         ZStack {
@@ -36,7 +37,10 @@ struct ContentView: View {
         .sheet(isPresented: $showSettings) {
             SettingsView(model: model)
         }
-        .messageAlert(model: model, isActive: !showHistory && !showSettings)
+        .fullScreenCover(isPresented: Binding(get: { !hasSeenIntro }, set: { hasSeenIntro = !$0 })) {
+            IntroView { hasSeenIntro = true }
+        }
+        .messageAlert(model: model, isActive: hasSeenIntro && !showHistory && !showSettings)
         .onChange(of: scenePhase) { _, phase in
             // Permission sheets temporarily make the scene inactive: only suspend on background.
             if phase == .background { model.deactivate() }

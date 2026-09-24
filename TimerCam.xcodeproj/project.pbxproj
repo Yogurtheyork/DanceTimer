@@ -11,6 +11,7 @@
 		7C0000000000000000000012 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0000000000000000000002 /* ContentView.swift */; };
 		7C0000000000000000000013 /* RecorderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0000000000000000000003 /* RecorderModel.swift */; };
 		7C0000000000000000000014 /* CameraRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0000000000000000000004 /* CameraRecorder.swift */; };
+		7C0000000000000000000018 /* IntroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0000000000000000000009 /* IntroView.swift */; };
 		7C0000000000000000000015 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7C0000000000000000000005 /* Assets.xcassets */; };
 		7C0000000000000000000016 /* PlaywriteBEWALGuides-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7C0000000000000000000007 /* PlaywriteBEWALGuides-Regular.ttf */; };
 		7C0000000000000000000017 /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 7C0000000000000000000008 /* OFL.txt */; };
@@ -21,6 +22,7 @@
 		7C0000000000000000000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7C0000000000000000000003 /* RecorderModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecorderModel.swift; sourceTree = "<group>"; };
 		7C0000000000000000000004 /* CameraRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraRecorder.swift; sourceTree = "<group>"; };
+		7C0000000000000000000009 /* IntroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroView.swift; sourceTree = "<group>"; };
 		7C0000000000000000000005 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7C0000000000000000000007 /* PlaywriteBEWALGuides-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PlaywriteBEWALGuides-Regular.ttf"; sourceTree = "<group>"; };
 		7C0000000000000000000008 /* OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
@@ -63,6 +65,7 @@
 				7C0000000000000000000002 /* ContentView.swift */,
 				7C0000000000000000000003 /* RecorderModel.swift */,
 				7C0000000000000000000004 /* CameraRecorder.swift */,
+				7C0000000000000000000009 /* IntroView.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -159,6 +162,7 @@
 				7C0000000000000000000012 /* ContentView.swift in Sources */,
 				7C0000000000000000000013 /* RecorderModel.swift in Sources */,
 				7C0000000000000000000014 /* CameraRecorder.swift in Sources */,
+				7C0000000000000000000018 /* IntroView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

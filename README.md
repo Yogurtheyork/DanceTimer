@@ -20,6 +20,10 @@
 - `ContentView.swift`：全螢幕相機介面（左下歷史錄影、中間錄影鍵、右下設定）、設定頁與回放。
 - `RecorderModel.swift`：權限、倒數、錄影狀態、相簿儲存。
 - `CameraRecorder.swift`：背景序列佇列操作相機、影片時長限制與錄影回呼。
+- `IntroView.swift`：第一次開啟時的三頁介紹（`@AppStorage("hasSeenIntro")`），以 `AsyncImage` 從網路載入舞者照片，含載入中、載入失敗（可重試）畫面。畫面上不標示作者；照片來源（Wikimedia Commons）記錄於此：
+  - [Don Quijote de la Mancha en el Teatro Teresa Carreño 3](https://commons.wikimedia.org/wiki/File:Don_Quijote_de_la_Mancha_en_el_Teatro_Teresa_Carre%C3%B1o,_Caracas,_Venezuela_3.jpg)：Wilfredor（舞作 Laura Fiorucci），CC0。
+  - [Marthe Weijers, hiphop dancer](https://commons.wikimedia.org/wiki/File:Marthe_Weijers,_hiphop_dancer.jpg)：Industrees，CC0。
+  - [Illstyle & Peace Productions hip hop show in Donetsk](https://commons.wikimedia.org/wiki/File:Illstyle_%26_Peace_Productions_hip_hop_show_in_Donetsk,_April_4,_2013_(8639988872).jpg)：U.S. Embassy Kyiv Ukraine，Public domain。
 - `TimerCam/Fonts`：App 字型 [Playwrite BE WAL Guides](https://fonts.google.com/specimen/Playwrite+BE+WAL+Guides)，SIL Open Font License（`OFL.txt`，一併打包進 App）。
 
 App 介面僅提供英文。
