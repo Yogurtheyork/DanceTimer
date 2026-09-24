@@ -23,6 +23,18 @@ struct IntroView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            // Local asset (Assets.xcassets/TimerCamLogo), unlike the remote photos below.
+            HStack(spacing: 10) {
+                Image("TimerCamLogo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 36, height: 36)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .accessibilityHidden(true)
+                Text("Timer Cam").font(.app(.headline))
+            }
+            .padding(.top)
+
             TabView(selection: $selection) {
                 ForEach(pages) { page in
                     VStack(spacing: 16) {

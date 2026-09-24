@@ -24,6 +24,15 @@
   - [Don Quijote de la Mancha en el Teatro Teresa Carreño 3](https://commons.wikimedia.org/wiki/File:Don_Quijote_de_la_Mancha_en_el_Teatro_Teresa_Carre%C3%B1o,_Caracas,_Venezuela_3.jpg)：Wilfredor（舞作 Laura Fiorucci），CC0。
   - [Marthe Weijers, hiphop dancer](https://commons.wikimedia.org/wiki/File:Marthe_Weijers,_hiphop_dancer.jpg)：Industrees，CC0。
   - [Illstyle & Peace Productions hip hop show in Donetsk](https://commons.wikimedia.org/wiki/File:Illstyle_%26_Peace_Productions_hip_hop_show_in_Donetsk,_April_4,_2013_(8639988872).jpg)：U.S. Embassy Kyiv Ukraine，Public domain。
+- `Assets.xcassets/TimerCamLogo.imageset`：直接複製現有 `AppIcon.png` 而成的本機圖片資源，未重新製作。
+
+## 圖片實作
+
+- 本機圖片：`IntroView` 頂端的 App 標題「Timer Cam」旁以 `Image("TimerCamLogo")` 顯示，資源打包在 App 內，不需網路。`Assets.xcassets` 在 Xcode 專案中是整個資料夾引用，新增的 imageset 會自動編入，不需修改 `project.pbxproj`。
+- 網路圖片：`IntroView` 三頁照片以 `AsyncImage` 載入，載入中顯示 `ProgressView`，失敗時顯示 `wifi.exclamationmark` 圖示與「Try again」按鈕（變更 `.id` 重新請求），成功後淡入並裁切為 4:3 圓角。照片來源見上方 `IntroView.swift` 說明。
+
+## 其他資源
+
 - `TimerCam/Fonts`：App 字型 [Playwrite BE WAL Guides](https://fonts.google.com/specimen/Playwrite+BE+WAL+Guides)，SIL Open Font License（`OFL.txt`，一併打包進 App）。
 
 App 介面僅提供英文。
