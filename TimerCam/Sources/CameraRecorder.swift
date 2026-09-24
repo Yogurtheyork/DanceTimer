@@ -115,6 +115,6 @@ final class CameraRecorder: NSObject, AVCaptureFileOutputRecordingDelegate {
 
     enum RecorderError: LocalizedError {
         case unavailable
-        var errorDescription: String? { "無法啟動相機或麥克風。請在實體 iPhone 上確認權限，並關閉其他使用相機的功能後重試。" }
+        var errorDescription: String? { "Couldn't start the camera or microphone. Check permissions on a real iPhone, close other apps using the camera, and try again." }
     }
 }

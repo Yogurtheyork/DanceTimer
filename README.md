@@ -20,11 +20,14 @@
 - `ContentView.swift`：全螢幕相機介面（左下歷史錄影、中間錄影鍵、右下設定）、設定頁與回放。
 - `RecorderModel.swift`：權限、倒數、錄影狀態、相簿儲存。
 - `CameraRecorder.swift`：背景序列佇列操作相機、影片時長限制與錄影回呼。
+- `TimerCam/Fonts`：App 字型 [Playwrite BE WAL Guides](https://fonts.google.com/specimen/Playwrite+BE+WAL+Guides)，SIL Open Font License（`OFL.txt`，一併打包進 App）。
+
+App 介面僅提供英文。
 
 ## 權限與資料
 
-- 使用者按「啟用相機與麥克風」才請求相機／麥克風權限；被拒絕可前往系統設定。
-- 使用者按「儲存到相簿」才請求 `.addOnly` 權限，不讀取使用者的照片資料庫。
+- 使用者按中間相機鍵（Turn on camera and microphone）才請求相機／麥克風權限；被拒絕可前往系統設定。
+- 使用者按「Save to Photos」才請求 `.addOnly` 權限，不讀取使用者的照片資料庫。
 - 影片存在 App 的 Documents/Recordings，重開 App 可回放；移除 App 會失去尚未匯出影片。
 - 不登入、不使用廣告、分析 SDK 或網路上傳。Documents 可能由 iOS 隨裝置備份。
 - 第一版尚無 App 內刪除影片功能；長期使用前應補上儲存空間管理。

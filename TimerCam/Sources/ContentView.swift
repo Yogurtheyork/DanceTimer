@@ -14,8 +14,8 @@ struct ContentView: View {
             CameraPreview(session: model.camera.session).ignoresSafeArea()
 
             VStack(spacing: 0) {
-                Text("錄影 \(model.duration) 秒 · 就位 \(model.preparation) 秒")
-                    .font(.footnote.weight(.semibold))
+                Text("Record \(model.duration)s · Get ready \(model.preparation)s")
+                    .font(.app(.footnote))
                     .padding(.horizontal, 14).padding(.vertical, 8)
                     .background(.black.opacity(0.45), in: Capsule())
                     .padding(.top, 8)
@@ -26,6 +26,7 @@ struct ContentView: View {
             }
             .foregroundStyle(.white)
         }
+        .font(.app())
         .tint(.orange)
         .sheet(isPresented: $showHistory, onDismiss: {
             if resumeAfterHistory { Task { await model.enableCamera() } }
@@ -47,24 +48,24 @@ struct ContentView: View {
         case .idle, .preparing:
             VStack(spacing: 12) {
                 Image(systemName: "camera.fill").font(.largeTitle)
-                Text(model.phase == .preparing ? "正在啟動相機…" : "點中間按鈕啟用相機與麥克風")
-                Text("使用後置相機與麥克風定時錄影").font(.caption)
+                Text(model.phase == .preparing ? "Starting camera…" : "Tap the center button to turn on the camera and microphone")
+                Text("Timed recording with the back camera and microphone").font(.app(.caption))
             }
             .padding().background(.black.opacity(0.35), in: RoundedRectangle(cornerRadius: 20))
         case .countdown:
-            Text(model.cue).font(.system(size: 96, weight: .black, design: .rounded))
+            Text(model.cue).font(.app(.largeTitle, size: 96))
                 .minimumScaleFactor(0.4).padding()
                 .shadow(radius: 8)
-                .accessibilityLabel("開拍倒數 \(model.cue)")
+                .accessibilityLabel("Countdown \(model.cue)")
         case .recording:
             VStack {
-                Label("錄影中", systemImage: "record.circle.fill").foregroundStyle(.red)
-                Text("\(model.remaining)").font(.system(size: 72, weight: .bold, design: .monospaced))
-                Text("秒剩餘")
+                Label("Recording", systemImage: "record.circle.fill").foregroundStyle(.red)
+                Text("\(model.remaining)").font(.app(.largeTitle, size: 72)).monospacedDigit()
+                Text("seconds left")
             }
             .padding().background(.black.opacity(0.35), in: RoundedRectangle(cornerRadius: 20))
         case .starting, .finishing:
-            ProgressView(model.phase == .starting ? "開始錄影…" : "正在完成影片…")
+            ProgressView(model.phase == .starting ? "Starting recording…" : "Finishing video…")
                 .tint(.white).padding()
                 .background(.black.opacity(0.35), in: RoundedRectangle(cornerRadius: 20))
         case .ready:
@@ -84,7 +85,7 @@ struct ContentView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     .overlay(RoundedRectangle(cornerRadius: 10).stroke(.white.opacity(0.8), lineWidth: 2))
             }
-            .accessibilityLabel("歷史錄影")
+            .accessibilityLabel("Recording history")
             .disabled(model.busy)
             .frame(maxWidth: .infinity)
 
@@ -97,7 +98,7 @@ struct ContentView: View {
                     .frame(width: 52, height: 52)
                     .background(.black.opacity(0.45), in: Circle())
             }
-            .accessibilityLabel("設定")
+            .accessibilityLabel("Settings")
             .disabled(model.busy)
             .frame(maxWidth: .infinity)
         }
@@ -133,11 +134,11 @@ private struct ShutterButton: View {
 
     private var label: String {
         switch model.phase {
-        case .idle: "啟用相機與麥克風"
-        case .ready: "開始倒數"
-        case .countdown: "取消倒數"
-        case .recording: "提前結束錄影"
-        default: "處理中"
+        case .idle: "Turn on camera and microphone"
+        case .ready: "Start countdown"
+        case .countdown: "Cancel countdown"
+        case .recording: "Stop recording early"
+        default: "Working"
         }
     }
 
@@ -158,17 +159,17 @@ private struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("錄影時間") {
+                Section("Recording length") {
                     HStack {
                         ForEach([40, 60], id: \.self) { seconds in
-                            Button("\(seconds) 秒") { model.duration = seconds }
+                            Button("\(seconds)s") { model.duration = seconds }
                                 .buttonStyle(.bordered)
                                 .tint(model.duration == seconds ? .orange : .gray)
                         }
                     }
-                    Stepper("自訂：\(model.duration) 秒", value: $model.duration, in: 1...600)
+                    Stepper("Custom: \(model.duration)s", value: $model.duration, in: 1...600)
                     HStack {
-                        Text("直接輸入秒數")
+                        Text("Seconds")
                         Spacer()
                         TextField("1–600", value: $model.duration, format: .number)
                             .keyboardType(.numberPad).multilineTextAlignment(.trailing)
@@ -176,23 +177,24 @@ private struct SettingsView: View {
                     }
                 }
                 Section {
-                    Stepper("就位時間：\(model.preparation) 秒", value: $model.preparation, in: 0...20)
-                    Picker("3、2、1 的速度", selection: $model.fastBeat) {
-                        Text("快 · 0.4 秒").tag(0.4)
-                        Text("標準 · 0.5 秒").tag(0.5)
-                        Text("慢 · 0.7 秒").tag(0.7)
+                    Stepper("Get ready: \(model.preparation)s", value: $model.preparation, in: 0...20)
+                    Picker("3-2-1 speed", selection: $model.fastBeat) {
+                        Text("Fast · 0.4s").tag(0.4)
+                        Text("Normal · 0.5s").tag(0.5)
+                        Text("Slow · 0.7s").tag(0.7)
                     }
                 } header: {
-                    Text("開拍倒數")
+                    Text("Countdown")
                 } footer: {
-                    Text("就位後顯示 5、4（每個 1 秒），接著加快 3、2、1。倒數配有系統提示音，請先確認手機音量與靜音設定。倒數不計入錄影時間。")
+                    Text("After the get-ready time, 5 and 4 show for 1 second each, then 3, 2, 1 speed up. Each number plays a system sound, so check your volume and silent mode. The countdown doesn't count toward the recording length.")
                 }
             }
-            .navigationTitle("設定")
+            .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar { Button("完成") { dismiss() }.disabled(!(1...600).contains(model.duration)) }
+            .toolbar { Button("Done") { dismiss() }.disabled(!(1...600).contains(model.duration)) }
             .interactiveDismissDisabled(!(1...600).contains(model.duration))
         }
+        .font(.app())
     }
 }
 
@@ -204,8 +206,8 @@ private struct HistoryView: View {
         NavigationStack {
             Group {
                 if model.clips.isEmpty {
-                    ContentUnavailableView("還沒有錄影", systemImage: "video.slash",
-                                           description: Text("完成錄影後會出現在這裡。"))
+                    ContentUnavailableView("No recordings yet", systemImage: "video.slash",
+                                           description: Text("Finished recordings show up here."))
                 } else {
                     List(model.clips, id: \.self) { url in
                         NavigationLink(value: url) {
@@ -219,17 +221,18 @@ private struct HistoryView: View {
                     }
                 }
             }
-            .navigationTitle("歷史錄影")
+            .navigationTitle("History")
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: URL.self) { url in
                 PlaybackView(url: url, model: model)
             }
-            .toolbar { Button("完成") { dismiss() }.disabled(model.saving) }
+            .toolbar { Button("Done") { dismiss() }.disabled(model.saving) }
             .safeAreaInset(edge: .bottom) {
-                Text("影片先保留在此裝置的 App 內。")
-                    .font(.footnote).foregroundStyle(.secondary).padding(.bottom, 8)
+                Text("Videos are kept in the app on this device.")
+                    .font(.app(.footnote)).foregroundStyle(.secondary).padding(.bottom, 8)
             }
         }
+        .font(.app())
         .interactiveDismissDisabled(model.saving)
         .messageAlert(model: model, isActive: true)
     }
@@ -268,14 +271,14 @@ private struct ClipThumbnail: View {
 
 private extension View {
     func messageAlert(model: RecorderModel, isActive: Bool) -> some View {
-        alert("提示", isPresented: Binding(get: { isActive && model.message != nil },
+        alert("Timer Cam", isPresented: Binding(get: { isActive && model.message != nil },
                                           set: { if !$0 { model.message = nil } })) {
             if model.needsSettings {
-                Button("開啟設定") {
+                Button("Open Settings") {
                     if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
                 }
             }
-            Button("確定", role: .cancel) { model.needsSettings = false }
+            Button("OK", role: .cancel) { model.needsSettings = false }
         } message: { Text(model.message ?? "") }
     }
 }
@@ -294,13 +297,13 @@ private struct PlaybackView: View {
     var body: some View {
         VStack(spacing: 20) {
             VideoPlayer(player: player)
-            Button(model.saving ? "儲存中…" : "儲存到相簿") {
+            Button(model.saving ? "Saving…" : "Save to Photos") {
                 Task { await model.save(url) }
             }.buttonStyle(.borderedProminent).disabled(model.saving)
-            Text("只有儲存時才會要求新增至相簿的權限。")
-                .font(.footnote).foregroundStyle(.secondary)
+            Text("Photo library access is only requested when you save.")
+                .font(.app(.footnote)).foregroundStyle(.secondary)
         }.padding()
-            .navigationTitle("影片回放")
+            .navigationTitle("Playback")
             .navigationBarBackButtonHidden(model.saving)
             .onDisappear { player.pause() }
     }

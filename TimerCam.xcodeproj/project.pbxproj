@@ -12,6 +12,8 @@
 		7C0000000000000000000013 /* RecorderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0000000000000000000003 /* RecorderModel.swift */; };
 		7C0000000000000000000014 /* CameraRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0000000000000000000004 /* CameraRecorder.swift */; };
 		7C0000000000000000000015 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7C0000000000000000000005 /* Assets.xcassets */; };
+		7C0000000000000000000016 /* PlaywriteBEWALGuides-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7C0000000000000000000007 /* PlaywriteBEWALGuides-Regular.ttf */; };
+		7C0000000000000000000017 /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 7C0000000000000000000008 /* OFL.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +22,8 @@
 		7C0000000000000000000003 /* RecorderModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecorderModel.swift; sourceTree = "<group>"; };
 		7C0000000000000000000004 /* CameraRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraRecorder.swift; sourceTree = "<group>"; };
 		7C0000000000000000000005 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		7C0000000000000000000007 /* PlaywriteBEWALGuides-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PlaywriteBEWALGuides-Regular.ttf"; sourceTree = "<group>"; };
+		7C0000000000000000000008 /* OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
 		7C0000000000000000000006 /* TimerCam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TimerCam.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -46,6 +50,7 @@
 			isa = PBXGroup;
 			children = (
 				7C0000000000000000000023 /* Sources */,
+				7C0000000000000000000025 /* Fonts */,
 				7C0000000000000000000005 /* Assets.xcassets */,
 			);
 			path = TimerCam;
@@ -62,10 +67,21 @@
 			path = Sources;
 			sourceTree = "<group>";
 		};
+		7C0000000000000000000025 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				7C0000000000000000000007 /* PlaywriteBEWALGuides-Regular.ttf */,
+				7C0000000000000000000008 /* OFL.txt */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
 		7C0000000000000000000024 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				7C0000000000000000000006 /* TimerCam.app */,
+				7C0000000000000000000007 /* PlaywriteBEWALGuides-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PlaywriteBEWALGuides-Regular.ttf"; sourceTree = "<group>"; };
+		7C0000000000000000000008 /* OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
+		7C0000000000000000000006 /* TimerCam.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -107,12 +123,11 @@
 			};
 			buildConfigurationList = 7C0000000000000000000061 /* Build configuration list for PBXProject "TimerCam" */;
 			compatibilityVersion = "Xcode 14.0";
-			developmentRegion = "zh-Hant";
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
-				"zh-Hant",
 			);
 			mainGroup = 7C0000000000000000000021;
 			productRefGroup = 7C0000000000000000000024 /* Products */;
@@ -130,6 +145,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				7C0000000000000000000015 /* Assets.xcassets in Resources */,
+				7C0000000000000000000016 /* PlaywriteBEWALGuides-Regular.ttf in Resources */,
+				7C0000000000000000000017 /* OFL.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -209,9 +226,9 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Timer Cam";
-				INFOPLIST_KEY_NSCameraUsageDescription = "使用相機定時錄製影片，並顯示取景畫面。";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "在錄影時收錄現場聲音。";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "將你選擇的影片儲存到相簿。";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Timer Cam uses the camera to show the preview and record timed videos.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Timer Cam records sound from the microphone while recording video.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Timer Cam saves the videos you choose to your photo library.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -243,9 +260,9 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Timer Cam";
-				INFOPLIST_KEY_NSCameraUsageDescription = "使用相機定時錄製影片，並顯示取景畫面。";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "在錄影時收錄現場聲音。";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "將你選擇的影片儲存到相簿。";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Timer Cam uses the camera to show the preview and record timed videos.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Timer Cam records sound from the microphone while recording video.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Timer Cam saves the videos you choose to your photo library.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

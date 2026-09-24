@@ -25,9 +25,9 @@
 
 | Xcode 顯示名稱 / 原始 key | Value |
 | --- | --- |
-| Privacy - Camera Usage Description / `NSCameraUsageDescription` | 使用相機定時錄製影片，並顯示取景畫面。 |
-| Privacy - Microphone Usage Description / `NSMicrophoneUsageDescription` | 在錄影時收錄現場聲音。 |
-| Privacy - Photo Library Additions Usage Description / `NSPhotoLibraryAddUsageDescription` | 將你選擇的影片儲存到相簿。 |
+| Privacy - Camera Usage Description / `NSCameraUsageDescription` | Timer Cam uses the camera to show the preview and record timed videos. |
+| Privacy - Microphone Usage Description / `NSMicrophoneUsageDescription` | Timer Cam records sound from the microphone while recording video. |
+| Privacy - Photo Library Additions Usage Description / `NSPhotoLibraryAddUsageDescription` | Timer Cam saves the videos you choose to your photo library. |
 
 缺少相機或麥克風用途說明會在存取時造成 App 終止；可在 Target → Info 確認。不需要 Background Modes、網路權限、第三方套件或 API key。
 
@@ -37,7 +37,7 @@
 
 1. Product → Build，先修正任何編譯錯誤；本 Linux 工作區無法執行此步。
 2. 連接 iPhone，信任 Mac，依系統指示開啟 Developer Mode，選擇該裝置後 Run。
-3. 按下方中間的相機鍵啟用相機與麥克風並允許權限；在右下「設定」調整就位時間與錄影長度，再按中間紅色鍵開始。
+3. 按下方中間的相機鍵啟用相機與麥克風並允許權限；在右下 Settings 調整就位時間與錄影長度，再按中間紅色鍵開始。
 4. 完成 `DEVICE_TESTS.md`，特別確認倒數音是否可聽見及影片是否正常收音。
 5. Simulator 只用來檢查基本排版；錄影及聲音需要實機。SwiftUI Preview 也不應當成相機功能驗證。
 

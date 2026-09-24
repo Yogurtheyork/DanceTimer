@@ -55,7 +55,7 @@ final class RecorderModel: ObservableObject {
         }
         camera.onInterruption = { [weak self] in
             self?.deactivate()
-            self?.message = "錄影被系統中斷。已完成的片段會保留；請重新啟用相機。"
+            self?.message = "Recording was interrupted by the system. Finished clips are kept; turn the camera on again to continue."
         }
     }
 
@@ -75,7 +75,7 @@ final class RecorderModel: ObservableObject {
             guard granted else {
                 phase = .idle
                 needsSettings = status != .restricted
-                message = type == .video ? "需要相機權限才能錄影。請到設定允許相機存取。" : "需要麥克風權限才能收錄現場聲音。請到設定允許麥克風存取。"
+                message = type == .video ? "Camera access is needed to record. Allow it in Settings." : "Microphone access is needed to record sound. Allow it in Settings."
                 return
             }
         }
@@ -99,7 +99,7 @@ final class RecorderModel: ObservableObject {
             do {
                 if self.preparation > 0 {
                     for second in stride(from: self.preparation, through: 1, by: -1) {
-                        self.cue = "準備 \(second)"
+                        self.cue = "Get ready \(second)"
                         try await Task.sleep(nanoseconds: 1_000_000_000)
                     }
                 }
@@ -155,14 +155,14 @@ final class RecorderModel: ObservableObject {
         let status = await PHPhotoLibrary.requestAuthorization(for: .addOnly)
         guard status == .authorized || status == .limited else {
             needsSettings = true
-            message = "尚未允許新增影片到相簿。影片仍保留在 App 內，可前往設定開啟權限。"
+            message = "Photo library access was not allowed. The video is still kept in the app; you can allow access in Settings."
             return
         }
         do {
             try await PHPhotoLibrary.shared().performChanges {
                 PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
             }
-            message = "影片已儲存到相簿。"
-        } catch { message = "儲存失敗：\(error.localizedDescription)。影片仍保留在 App 內。" }
+            message = "Video saved to your photo library."
+        } catch { message = "Couldn't save: \(error.localizedDescription). The video is still kept in the app." }
     }
 }
