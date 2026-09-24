@@ -79,9 +79,7 @@
 		7C0000000000000000000024 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				7C0000000000000000000007 /* PlaywriteBEWALGuides-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PlaywriteBEWALGuides-Regular.ttf"; sourceTree = "<group>"; };
-		7C0000000000000000000008 /* OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
-		7C0000000000000000000006 /* TimerCam.app */,
+				7C0000000000000000000006 /* TimerCam.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";

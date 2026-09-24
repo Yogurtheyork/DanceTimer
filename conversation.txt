@@ -1,0 +1,753 @@
+TimerCam AI 開發紀錄
+====================
+
+專案：Timer Cam（原名 Dance Timer）— 定時錄影 iOS App（SwiftUI）
+Repo：https://github.com/Yogurtheyork/TimerCam（原 repo 名稱 DanceTimer）
+AI 工具：Claude Code（CLI，Linux / WSL2 環境，無 Mac、無 Xcode、無 Swift 編譯器）
+整理日期：2026-09-24
+
+時間均為台灣時間（UTC+8）。
+
+
+一、資料來源與缺漏說明
+----------------------
+
+本紀錄只使用以下實際存在的資料，沒有補寫或推測任何對話內容：
+
+  1. Git commit 紀錄（git log），共 5 個 commit。
+  2. Claude Code 本機對話紀錄（~/.claude/projects/-home-york-projects-iOS/*.jsonl），共 3 個 session：
+     - Session A  be8ebf13…  2026-09-23 11:35–12:06  改名 Timer Cam、repo 改名、產生 Xcode 專案、實機測試說明
+     - Session B  f6530a29…  2026-09-24 14:39–14:44  設定 App icon
+     - Session C  ab0cd508…  2026-09-24 14:22 起    相機式介面、英文化與字型、pbxproj 修正、本份紀錄
+
+【缺少】2026-09-20 建立 Dance Timer 的原始對話（commit 4524cf9）。
+  - 本機 Claude Code 對話紀錄中找不到這段 session，也沒有對話摘要可參考。
+  - 另一個可能的來源 claude-mem 記憶資料庫，在整理時無法連線（worker 未啟動），因此沒有查到。
+  - 因此這個版本的需求、Prompt 與 AI 建議都無法取得，下文只根據 commit 內容描述「做了什麼」。
+  - 如果這段對話是在其他工具或其他電腦（例如 claude.ai 網頁版、ChatGPT）進行，需要你自行從那邊匯出補上。
+
+【缺少】Session B 使用者貼上的 icon 原圖不在 repo 內，只保留處理後的 AppIcon.png。
+
+【省略】對話中 AI 執行的工具指令（讀檔、改檔、git 等）與其輸出沒有收錄，只保留雙方的文字訊息。
+
+
+二、版本與分支
+--------------
+
+依重大變更建立了以下分支（只指向既有 commit，不改動任何內容）。
+checkout 分支即可切換到該版本展示。
+
+  分支                          commit   日期              內容
+  ----------------------------  -------  ----------------  -----------------------------------------------
+  version/v1-dance-timer        4524cf9  2026-09-20 12:11  初版 Dance Timer：街舞定時錄影（無 Xcode 專案檔）
+  version/v2-timer-cam-xcode    ff62b6a  2026-09-23 11:50  改名 Timer Cam、移除街舞字眼、加入 .xcodeproj
+  version/v3-camera-ui          c702edf  2026-09-24 14:41  相機式介面：左下歷史錄影、中間錄影鍵、右下設定；App icon
+  main（最新）                  773f320  2026-09-24 14:52  介面全英文、Playwrite BE WAL Guides 字型
+                                                            ※ 此 commit 的 project.pbxproj 有格式錯誤，修正尚未 commit（見第三節 v4）
+
+未另外開分支的 commit：
+  6f648fc  2026-09-23 11:37  只有改名與文字調整，15 分鐘後的 ff62b6a 已包含，併入 v2。
+
+注意：
+  - v1 沒有 .xcodeproj，要依當時的 docs/XCODE_SETUP.md 在 Mac 上手動建立專案才能執行。
+  - v1、v2 資料夾結構不同（DanceTimer/ vs TimerCam/），切換分支時 Xcode 請重新開啟專案。
+
+
+三、開發歷程（依時間）
+----------------------
+
+■ v1 — Dance Timer 初版（2026-09-20，commit 4524cf9）
+
+  需求 / Prompt：【缺少原始對話，無法取得】
+  AI 建議：【缺少原始對話，無法取得】
+  實作內容（依 commit 內容）：
+    - DanceTimer/Sources/ 四個 Swift 檔：
+        DanceTimerApp.swift   App 入口
+        ContentView.swift     設定、相機預覽、影片列表與回放
+        RecorderModel.swift   權限、倒數、錄影狀態、相簿儲存
+        CameraRecorder.swift  背景序列佇列控制 AVCaptureSession、錄影時長上限
+    - 功能：錄影 40／60／自訂 1–600 秒；就位倒數；5、4（各 1 秒）後加速 3、2、1 並播系統提示音；
+      到時自動停止；App 內回放；按下才要求相簿權限並儲存。
+    - docs/XCODE_SETUP.md：在 Mac 上手動建立 Xcode 專案的步驟。
+    - docs/DEVICE_TESTS.md：實機驗收清單。
+    - 當時 README 以「MC 節奏 5、4、321」描述倒數，並註明不與音樂 BPM 同步、不接 Spotify（v2 時刪除）。
+    - 畫面文字含「準備好你的下一個回合」「錄製練舞影片」「進場倒數」「練習影片」「回合回放」。
+  遇到的問題：【缺少原始對話，無法取得】
+
+
+■ v2 — 改名 Timer Cam、加入 Xcode 專案（2026-09-23，Session A，commit 6f648fc、ff62b6a）
+
+  1. 11:35  需求：「幫我把街舞相關的文字刪掉 然後就改成一個定時拍攝的 app」
+     實作：資料夾與檔名 DanceTimer → TimerCam；畫面文字改為通用說法（例：「進場倒數」→「開拍倒數」、
+           「練習影片」→「已錄影片」）；README 刪除 MC／BPM／Spotify 說明；三份文件同步更新。
+     → commit 6f648fc，推上 GitHub main。
+
+  2. 11:37  需求：「幫我把 repo 改名成 TimerCam」
+     實作：GitHub repo 由 DanceTimer 改名為 TimerCam，本機 origin 改為新網址。
+
+  3. 11:45  問題：使用者在 Mac 上 clone 後，找不到 .xcodeproj，Xcode 無法把它當成 App 開啟。
+            （使用者貼上另一個 AI 的教學，該教學假設 repo 內已有 Xcode 專案。）
+     AI 建議：說明 repo 只有 .swift 原始碼，沒有專案檔，Xcode 不會把它視為 App。
+              提出兩種做法：(1) 在 Mac 上用 Xcode 建專案再 push；(2) 由 AI 直接產生 .xcodeproj。
+     使用者選擇：「好 幫我用第 2 種」
+
+  4. 11:48  實作：手寫產生 TimerCam.xcodeproj（project.pbxproj、shared scheme、workspace）
+                  與 Assets.xcassets（AppIcon 尚無圖片）；專案設定 iOS 17、僅 iPhone、僅直向、
+                  Swift 5、Default Actor Isolation = nonisolated、三項權限說明。
+                  用解析工具確認專案檔格式正確；README 與 XCODE_SETUP 改為「直接開啟專案」。
+     → commit ff62b6a，推上 GitHub。
+     限制：AI 環境沒有 Xcode，專案檔未經實際編譯驗證。
+
+  5. 11:54  問題：「mac 沒有辦法用相機跟麥克風 這個情況該怎麼辦 我要怎麼在手機上測試」
+     AI 建議：Mac 只負責編譯，App 裝到 iPhone 執行、用手機的相機與麥克風。
+              步驟：Xcode 登入 Apple ID → Personal Team 簽署、改唯一 Bundle ID → 接線並信任電腦 →
+              開啟 iPhone 開發者模式 → ⌘R → 在「VPN 與裝置管理」信任開發者。
+              說明免費帳號限制：7 天後需重新安裝、最多 3 個 App；可開啟無線偵錯。
+
+
+■ v3 — 相機式介面與 App icon（2026-09-24，Session B + Session C，commit c702edf）
+
+  1. 14:37  需求（Session C）：「幫我新增歷史錄影介面在左下角 中間是相機本身 右邊是設定」
+     AI 建議／實作：主畫面改成一般相機 App 的配置：
+       - 相機預覽全螢幕，頂部小標籤顯示目前錄影秒數與就位時間。
+       - 底部列：左＝歷史錄影（最新影片縮圖，點開為列表，可回放與存到相簿）；
+                 中＝錄影鍵（依狀態：啟用相機 → 紅圓開始倒數 → 紅方塊取消／提前結束；處理中顯示轉圈）；
+                 右＝設定（原本主頁上的秒數、就位時間、3-2-1 速度改成獨立設定頁）。
+       - 倒數或錄影中停用歷史與設定鍵；開啟歷史時暫停相機，關閉後自動恢復。
+       - 刪除主畫面舊的影片列表與開始按鈕；README、XCODE_SETUP、DEVICE_TESTS 同步更新。
+
+  2. 14:40  需求（Session B，同時進行）：使用者提供一張圖片：「把這個影像複製到現在的專案 變成 icon」
+     實作：裁掉原圖四周黑邊、縮成 1024×1024、移除透明度，存成 AppIcon.png 並更新 Contents.json。
+     提醒：原圖圓角外留有少量黑角，iOS 圓角遮罩應會切掉；實機若邊緣異常可改成滿版。
+
+  3. 14:41  使用者（Session C）：「好，幫我 commit」→ commit c702edf；14:42「直接 push」→ 推上 GitHub。
+     遇到的問題：Session C 用 git add -A 提交，把 Session B 剛放入、尚未 commit 的 icon 檔一起收進 c702edf。
+       Session C 當時回報「包含我改的四個檔案」，這個說法不正確，實際是六個檔案（多了 AppIcon.png 與 Contents.json）。
+       Session B 之後要 commit icon 時才發現已被收進 c702edf，提議可拆成兩個 commit（使用者未回覆）。
+       教訓：兩個 AI session 同時改同一個 repo 時，commit 前應先確認 git status，只加入自己改的檔案。
+     限制：未經 Xcode 編譯或實機測試。
+
+
+■ v4 — 英文介面與 Google 字型（2026-09-24，Session C，commit 773f320 + 未 commit 的修正）
+
+  1. 14:45  需求：「https://www.fontspace.com/dareva-font-f165109 我想要把 app 字體改成這個」
+     AI 調查：下載字型與授權檔後發現
+       - 授權為試用版「FREE FOR PERSONAL USE ONLY」，明文禁止「Website or application deployment」，All Rights Reserved；
+         repo 是公開的，commit 字型檔等同散布。
+       - 試用版只有基本拉丁字元，沒有任何中文字，而當時介面大多是中文。
+     AI 詢問授權處理方式與套用範圍 → 使用者中斷這個提問，改提出新方向。
+
+  2. 14:49  需求：「https://fonts.google.com/selection?preview.script=Latn 這個是可以的嗎 然後語言要有支援英文」
+     AI 建議：Google Fonts 多為 SIL Open Font License，可放進 App 與公開 repo（需附 OFL.txt）。
+              但 selection 連結不含字型名稱，請使用者提供；並確認「支援英文」是指 App 介面英文化或字型要支援英文。
+
+  3. 14:50  需求：使用者貼上 Google Fonts 的 <link> 語法（family=Playwrite+BE+WAL+Guides），並說「app 只有英文好了」
+     實作：
+       - 從 google/fonts 官方 repo 下載 PlaywriteBEWALGuides-Regular.ttf 與 OFL.txt，放在 TimerCam/Fonts/ 並打包進 App。
+       - App 啟動時以 CTFontManagerRegisterFontsForURL 註冊字型（不需 Info.plist 的 UIAppFonts）。
+       - 新增 Font.app(_:size:) 輔助函式，套用到全部畫面，並支援動態字級；導覽列標題也改用此字型。
+       - 所有畫面文字、錯誤訊息、倒數（「Get ready 3」）改為英文；三項權限說明改為英文；
+         專案開發語言改為 en、移除 zh-Hant。
+       - README 註明字型來源與授權、App 僅提供英文；docs 同步更新。
+     AI 提醒：「Guides」版本會在每個字母後畫手寫練習格線，倒數大字時會很明顯；
+              不要格線可以改用 Playwrite BE WAL。系統彈窗與權限提示無法改字型。
+  4. 14:52  使用者：「commit 然後 push」→ commit 773f320，推上 GitHub。
+
+  5. 之後  問題（使用者回報）：project.pbxproj 格式錯誤，Products 群組的 children 陣列內被插入兩個 PBXFileReference 完整定義。
+     原因：AI 用文字取代的方式插入字型定義，比對「TimerCam.app」那一行時，同一段文字也出現在 Products 群組內，
+           結果兩處都被插入。當時沒有再用解析工具驗證（v2 時有做）。
+     修正：刪除 Products 群組內的兩行，恢復縮排；用 openstep 解析器確認整個檔案可正確解析，
+           每個群組與建置階段引用的項目都存在，字型與 OFL.txt 各只出現在應有的位置。
+     狀態：【修正尚未 commit】GitHub 上 main（773f320）仍是有錯誤的版本。
+           commit 後建議再建立 version/v4-english-font 分支指向修正後的 commit。
+
+
+四、各版本 App 截圖清單
+----------------------
+
+目前 repo 內沒有任何 App 畫面截圖或展示影片，以下全部都需要補拍。
+docs/XCODE_SETUP.md 要求的作業截圖：時間設定、倒數、錄影中、回放、權限說明畫面；
+展示影片：設定短片時長 → 倒數 → 自動開始與停止 → 回放 → 儲存到相簿。
+
+說明：Simulator 沒有相機，標「實機」的畫面必須用 iPhone 拍；標「模擬器可」的可在 Simulator 拍。
+iPhone 截圖：同時按側邊按鈕＋音量上鍵；Simulator：⌘S。
+
+v1 Dance Timer（version/v1-dance-timer，需先依當時文件手動建 Xcode 專案）
+  [ ] 1-1 主畫面：未啟用相機（「準備好你的下一個回合」、時間設定）  模擬器可
+  [ ] 1-2 權限要求：相機、麥克風系統對話框                  實機
+  [ ] 1-3 進場倒數（就位倒數與 5-4-3-2-1）                   實機
+  [ ] 1-4 錄影中（剩餘秒數）                                 實機
+  [ ] 1-5 練習影片列表                                       實機
+  [ ] 1-6 回合回放與儲存到相簿                               實機
+
+v2 Timer Cam（version/v2-timer-cam-xcode）
+  [ ] 2-1 Xcode 直接開啟 TimerCam.xcodeproj 的畫面（證明專案可開啟）  Mac
+  [ ] 2-2 主畫面：未啟用相機（「準備好下一段拍攝」、時間設定）        模擬器可
+  [ ] 2-3 權限拒絕後的提示與「開啟設定」按鈕                          實機
+  [ ] 2-4 開拍倒數                                                     實機
+  [ ] 2-5 錄影中                                                       實機
+  [ ] 2-6 已錄影片列表                                                 實機
+  [ ] 2-7 影片回放與儲存到相簿、儲存成功提示                           實機
+
+v3 相機式介面（version/v3-camera-ui）
+  [ ] 3-1 主畫面：未啟用（底部列：歷史／錄影鍵／設定）          模擬器可
+  [ ] 3-2 相機已啟用、待錄影（全螢幕預覽、紅色圓形錄影鍵）      實機
+  [ ] 3-3 開拍倒數（錄影鍵變方塊）                              實機
+  [ ] 3-4 錄影中（剩餘秒數）                                    實機
+  [ ] 3-5 正在完成影片                                          實機
+  [ ] 3-6 設定頁（錄影時間、開拍倒數）                          模擬器可
+  [ ] 3-7 歷史錄影：沒有影片時的空白畫面                        模擬器可
+  [ ] 3-8 歷史錄影：有影片的列表與縮圖                          實機
+  [ ] 3-9 影片回放與儲存到相簿                                  實機
+  [ ] 3-10 主畫面左下角顯示最新影片縮圖                          實機
+  [ ] 3-11 主畫面上的 App icon                                   實機或模擬器
+
+v4 英文與字型（main，需先 commit pbxproj 修正）
+  [ ] 4-1 英文主畫面，確認 Playwrite 字型已載入（不是系統字型）  模擬器可
+  [ ] 4-2 英文權限說明對話框（相機、麥克風、相簿）              實機
+  [ ] 4-3 倒數大字（Get ready 3、5-4-3-2-1），確認格線效果      實機
+  [ ] 4-4 錄影中（seconds left）                                 實機
+  [ ] 4-5 Settings 頁                                            模擬器可
+  [ ] 4-6 History 空白與有影片列表                               模擬器可／實機
+  [ ] 4-7 Playback 與「Video saved to your photo library.」提示  實機
+  [ ] 4-8 大字級（動態字級）下的主畫面與設定頁                  模擬器可
+
+展示影片
+  [ ] 最新版完整流程：設定短片時長 → 倒數 → 自動開始與停止 → 回放 → 儲存到相簿（實機螢幕錄影）
+  [ ] （選擇性）v1 → v4 介面演進對照
+
+
+五、原始對話紀錄
+----------------
+
+以下由 Claude Code 對話紀錄檔自動擷取，保留使用者與 AI 的文字原文，未經修改。
+工具呼叫與其輸出未收錄；使用者貼上的內容保留原文。
+
+【缺少】2026-09-20 Dance Timer 初版對話（見第一節）。
+
+======================================================================
+Session A（be8ebf13-9c26-4b0d-9783-5a39228d7e0a）— 改名 Timer Cam、repo 改名、產生 Xcode 專案、實機測試說明
+======================================================================
+
+--- [2026-09-23 11:35:47] 使用者
+幫我把街舞相關的文字刪掉 然後就改成一個定時拍攝的 app
+
+--- [2026-09-23 11:36:10] AI
+Now the docs.
+
+--- [2026-09-23 11:36:26] AI
+街舞相關的文字都刪掉了，現在它是一個通用的定時錄影 App，名字改成 **Timer Cam**。錄影的功能和流程都沒有改：先就位倒數，再倒數 5、4、3、2、1，然後錄影，時間到自動停止，最後可以回放或存到相簿。改完後我搜尋過一遍，沒有剩下任何街舞、練舞或 MC 的字眼。這個環境沒有 Xcode，所以還沒編譯過。
+
+**改名**
+- 資料夾 `DanceTimer/` 改成 `TimerCam/`
+- `DanceTimerApp.swift` 改成 `TimerCamApp.swift`，裡面的 struct 也跟著改成 `TimerCamApp`
+- 相機佇列的標籤 `dance.camera` 改成 `timercam.camera`
+
+**畫面文字**
+- 標題：「Dance Timer」→「Timer Cam」
+- 「準備好你的下一個回合」→「準備好下一段拍攝」
+- 「錄製練舞影片」→「定時錄影」
+- 「進場倒數」→「開拍倒數」，按鈕「開始進場倒數」→「開始倒數」
+- 「練習影片」→「已錄影片」，「回合回放」→「影片回放」
+- 相機權限的提示：「才能錄製練舞影片」→「才能錄影」
+
+**文件**
+- `README.md`：標題改成「Timer Cam — 定時拍攝 iOS 作業」。和 MC 節奏、BPM、Spotify 有關的說明都拿掉了，檔案路徑也更新了。
+- `docs/XCODE_SETUP.md`：Product Name 和路徑改成 TimerCam。相機、麥克風、相簿的三個權限說明也改成通用說法，不再提街舞或練舞。
+- `docs/DEVICE_TESTS.md`：「已知範圍」裡的 Spotify、音軌合成和真人 MC 配音刪掉了，改寫成「語音倒數」。
+
+改動還沒 commit。之後在 Mac 上建 Xcode 專案時，Product Name 要填 `TimerCam`。需要的話我可以幫你 commit。
+
+--- [2026-09-23 11:36:46] 使用者
+cl3
+
+--- [2026-09-23 11:37:01] 使用者
+那就發送 commit 到github
+
+--- [2026-09-23 11:37:14] AI
+已經 commit，並推送到 GitHub 的 `main` 分支了。沒有另外開分支，因為之前的 commit 也是直接放在 `main`。
+
+- Commit：`6f648fc` Rename Dance Timer to Timer Cam and remove dance-specific wording
+- Repo：https://github.com/Yogurtheyork/DanceTimer
+
+GitHub 上的 repo 名稱還是 `DanceTimer`。如果要一起改名，可以在 GitHub 的 Settings → Repository name 改成例如 `TimerCam`。改完之後，本地要跑 `git remote set-url origin https://github.com/Yogurtheyork/TimerCam.git`，這一步我可以幫你做。
+
+--- [2026-09-23 11:37:37] 使用者
+幫我把 repo 改名成 TimerCam
+
+--- [2026-09-23 11:37:45] AI
+GitHub 上的 repo 已經改名成 **TimerCam**：https://github.com/Yogurtheyork/TimerCam
+
+本地的 `origin` 也改成新網址了。我用新網址連回去確認過，遠端 `main` 上是最新的 commit `6f648fc`。舊網址 `DanceTimer` 目前會被 GitHub 自動轉到新的 repo。
+
+--- [2026-09-23 11:45:58] 使用者
+<貼上的內容>
+可以，但你現在這個情況要先分清楚一件事：
+
+**如果 GitHub 上本來就有一個完整的 Xcode 專案，你不需要把程式碼「塞進」你剛建立的 Untitled Project。**
+最簡單、也最不容易出問題的方法是：**直接把 GitHub repo Clone 下來，然後用 Xcode 開它。**
+
+### 建議你這樣做
+
+#### ① 先把你現在的 Untitled Project 關掉
+
+不用刪除也沒關係。
+
+#### ② 在 Xcode 選
+
+**File → Clone Repository...**
+
+然後貼上你的 GitHub repo 網址，例如：
+
+```text
+https://github.com/username/my-app.git
+```
+
+選擇 Clone。
+
+#### ③ Clone 完後，Xcode 會把整個 repo 放到你的 Mac
+
+例如：
+
+```text
+Documents/
+└── my-app/
+    ├── MyApp.xcodeproj
+    ├── MyApp/
+    │   ├── ContentView.swift
+    │   └── ...
+    └── README.md
+```
+
+#### ④ 打開 `.xcodeproj`
+
+如果看到：
+
+```text
+MyApp.xcodeproj
+```
+
+就直接打開它。
+
+如果看到：
+
+```text
+MyApp.xcworkspace
+```
+
+通常就開 `.xcworkspace`。
+
+#### ⑤ 選 iPhone Simulator → `⌘ + R`
+
+就可以編譯並執行。
+
+---
+
+### ⚠️ 你現在建立的 Untitled Project 怎麼辦？
+
+**先不要把 GitHub 的東西一個一個拖進去。**
+
+因為如果 GitHub repo 本身已經是一個 Xcode project，你這樣做反而容易造成：
+
+```text
+GitHub Project
+      ↓
+Untitled Project
+      ↓
+檔案重複
+Target 設定錯誤
+Package 設定錯誤
+Build Settings 遺失
+```
+
+所以你現在最好的做法是：
+
+> **刪掉/關閉 Untitled Project → Clone GitHub Repo → 直接開 GitHub 裡的 `.xcodeproj`**
+
+如果你把**你的 GitHub repo 網址貼給我**，我可以直接看它的結構，告訴你 **「你這個 repo 在 Xcode 裡到底要開哪個檔案」**，以及 Clone 後第一步要做什麼。
+</貼上的內容>
+
+ 現在我複製下來的結果沒有 .xcodeproj這類的檔案 並且我沒有 myapp 這類的功能
+
+--- [2026-09-23 11:46:16] AI
+repo 裡本來就沒有 `.xcodeproj`，你的 clone 沒有出錯。這個 repo 是在 Linux 上寫的，裡面只放了 Swift 原始碼和文件，Xcode 專案要你在 Mac 上自己建一次。你貼的那段說明假設 repo 裡已經有 Xcode 專案，所以對這個 repo 不適用。
+
+照下面做就可以跑起來（完整版在 `docs/XCODE_SETUP.md`）：
+
+### 1. 建立專案
+1. 關掉 Untitled Project，也可以直接刪掉。
+2. Xcode → **File → New → Project → iOS → App**。
+3. 設定：
+   - Product Name：`TimerCam`
+   - Interface：**SwiftUI**
+   - Language：**Swift**
+   - Storage：**None**
+   - Team：選你的 Apple ID
+4. 儲存位置：在你 clone 下來的 `TimerCam` 資料夾裡新建一個 `Xcode` 子資料夾，存在那裡。**不要勾「Create Git repository」**，因為外層已經是 git repo 了。
+
+### 2. 換成 repo 的程式碼
+1. 在左側檔案列表，刪掉 Xcode 自動產生的 `ContentView.swift` 和 `TimerCamApp.swift`，選 **Move to Trash**。
+2. 在左側的 TimerCam 資料夾按右鍵 → **Add Files to "TimerCam"…**，選 repo 裡 `TimerCam/Sources/` 的 4 個 `.swift` 檔。
+   - **不要勾** Copy items if needed
+   - Target 要勾 **TimerCam**
+
+### 3. 必要設定（點左上藍色專案圖示 → Target TimerCam）
+- **General**：Minimum Deployments 設成 iOS 17.0。Orientation 只勾 Portrait。
+- **Build Settings**（搜尋框搜名稱）：
+  - Swift Language Version 設成 **Swift 5**
+  - **Default Actor Isolation** 設成 **nonisolated**。新版 Xcode 預設是 MainActor，不改的話會編譯錯誤。
+- **Info**：按 + 新增三個權限說明。少了前兩個，App 一用到相機或麥克風就會閃退。
+
+| Key | Value |
+|---|---|
+| Privacy - Camera Usage Description | 使用相機定時錄製影片，並顯示取景畫面。 |
+| Privacy - Microphone Usage Description | 在錄影時收錄現場聲音。 |
+| Privacy - Photo Library Additions Usage Description | 將你選擇的影片儲存到相簿。 |
+
+### 4. 執行
+- **Simulator 沒有相機**，只能看畫面排版，按「啟用相機與麥克風」會跳錯誤，這是正常的。
+- 要真的錄影，請把 **iPhone 接上 Mac**，選那台 iPhone，再按 `⌘ + R`。第一次需要在 iPhone 上開 Developer Mode，並信任開發者。
+
+### 5. 建好後推回 GitHub
+在終端機執行：
+```bash
+cd TimerCam        # 你 clone 下來的資料夾
+git add Xcode
+git commit -m "Add Xcode project"
+git push
+```
+這樣之後 clone 下來就會有 `.xcodeproj`，直接打開就能用。
+
+我手上沒有 Mac，這些步驟沒有實際在 Xcode 跑過，如果中間有編譯錯誤，把錯誤訊息貼給我。另外，我也可以直接幫你產生 `.xcodeproj` 並放進 repo，這樣你 clone 下來就能直接打開，省掉上面第 1 到 3 步。不過我這邊沒有 Xcode，產生出來的專案可能要你打開時稍微修一下。
+
+--- [2026-09-23 11:47:39] 使用者
+所以我如果是從 github 建立的 code 不會被 xcode 視為 app
+
+--- [2026-09-23 11:47:47] AI
+對。Xcode 不是看 code 從哪裡來，而是看有沒有**專案檔**。
+
+我們的 repo 目前只有 `.swift` 原始碼，沒有 `.xcodeproj`，所以 Xcode 只會當成一般資料夾，不知道它是一個 App。
+
+`.swift` 檔只是程式內容。要讓 Xcode 把它當成 App 來 build，還需要 `.xcodeproj` 告訴它這些事：
+
+- 這是 iOS App，名字叫 TimerCam
+- 要編譯哪幾個 `.swift` 檔
+- Bundle ID、簽署的 Team、最低 iOS 版本
+- 相機、麥克風這些權限說明
+- 圖示資源（Assets）
+
+像這樣就不算 App：
+
+```text
+TimerCam/                  ← 現在的 repo
+├── TimerCam/Sources/*.swift
+└── docs/
+```
+
+多了 `.xcodeproj` 之後就是 App：
+
+```text
+TimerCam/                  ← 補上專案檔之後
+├── Xcode/TimerCam.xcodeproj   ← 打開它就能 build
+├── TimerCam/Sources/*.swift
+└── docs/
+```
+
+所以只要把 `.xcodeproj` 放進 repo，之後從 GitHub clone 下來，打開它就能直接用。你貼的那段說明就是在講這種情況。
+
+補上的方法有兩種：
+
+1. **你在 Mac 上用 Xcode 建一次**（上一則的步驟），再 push 回 GitHub。這樣最保險。
+2. **我直接在 repo 裡產生 `.xcodeproj`**，你 clone 下來就能打開。缺點是我這邊沒有 Xcode 可以驗證，打開時可能要你修一點設定。
+
+要我幫你做第 2 種嗎？
+
+--- [2026-09-23 11:48:06] 使用者
+好 幫我用第 2 種
+
+--- [2026-09-23 11:49:06] AI
+Adding a shared scheme so Xcode's Run button works immediately, then validating the project file parses.
+
+--- [2026-09-23 11:49:47] AI
+Project file parses cleanly. Now updating the docs to match.
+
+--- [2026-09-23 11:50:16] AI
+我已經把 `TimerCam.xcodeproj` 做好放進 repo，也推上 GitHub 了（commit `ff62b6a`）。現在 clone 下來可以直接打開，不用再自己建專案。
+
+我這邊沒有 Mac 和 Xcode，所以這個專案還沒實際編譯過。我只用工具讀過專案檔，格式正確，裡面引用的檔案也都找得到。
+
+### 你在 Mac 上要做的
+1. **拿到最新版**
+   - 如果你之前已經 clone 過，在那個資料夾執行 `git pull`
+   - 或重新 clone：`https://github.com/Yogurtheyork/TimerCam.git`
+2. **打開最外層的 `TimerCam.xcodeproj`**。
+3. **設定簽署**：點左側藍色的 TimerCam → Target TimerCam → **Signing & Capabilities** → Team 選你的 Apple ID。
+   - 如果 Bundle Identifier 顯示已經被別人用走，改成其他的，例如 `com.你的名字.TimerCam`。
+4. 選一台裝置，按 `⌘ + R` 執行。
+   - Simulator 只能看畫面，沒有相機。
+   - 要真的錄影，得用實體 iPhone。
+
+### 專案裡已經設定好的
+- iOS 17 以上、只支援 iPhone、只能直向
+- Swift 5，Default Actor Isolation 設成 nonisolated
+- 相機、麥克風、相簿的三個權限說明
+- 一個 AppIcon，但還沒放圖片，所以編譯時會出現缺少圖示的警告，App 還是能跑
+
+`README.md` 和 `docs/XCODE_SETUP.md` 也改成「直接開啟專案」的步驟了。
+
+### 可能遇到的狀況
+- Xcode 跳出「**Update to recommended settings**」：按接受就好，之後把變更 commit 回去。
+- 打不開專案或編譯失敗：把錯誤訊息或截圖貼給我，我幫你修。
+
+--- [2026-09-23 11:54:56] 使用者
+好 因為 mac 沒有辦法用相機跟麥克風 這個情況該怎麼半 我要怎麼在手機上測試
+
+--- [2026-09-23 11:55:10] AI
+Mac 本身不用有相機。流程是在 Mac 上用 Xcode 編譯，再把 App 裝到 iPhone 上跑，錄影用的是手機的相機和麥克風。免費的 Apple ID 就能做到，不用付費開發者帳號。
+
+### 需要準備
+- 一支 **iOS 17 以上**的 iPhone
+- 傳輸線（USB-C 或 Lightning）
+- 一個 Apple ID
+- 你的 Xcode 要支援手機的 iOS 版本。手機 iOS 比 Xcode 新的話，要先更新 Xcode。
+
+### 步驟
+
+**1. 在 Xcode 登入 Apple ID**
+Xcode → Settings → **Accounts** → 左下角「+」→ Apple ID → 登入。
+
+**2. 設定簽署**
+點左側藍色的 TimerCam → Target **TimerCam** → **Signing & Capabilities**：
+- 勾選 Automatically manage signing
+- Team 選「**你的名字 (Personal Team)**」
+- Bundle Identifier 改成獨一無二的，例如 `com.jamessu.TimerCam`（免費帳號很容易跟別人重複）
+
+**3. 手機接上 Mac**
+- 用線連接。手機跳出「要信任這部電腦嗎？」時按**信任**，輸入手機密碼。
+- Xcode 上方中間的裝置選單，選你的 iPhone（不要選 Simulator）。
+- 第一次連接時，Xcode 可能會下載手機的支援檔案，等它跑完。
+
+**4. 開啟開發者模式**
+iPhone：**設定 → 隱私權與安全性 → 開發者模式** → 打開 → 手機重新開機 → 開機後再按一次「開啟」。
+如果找不到這個選項，先在 Xcode 按一次 `⌘ + R`，選項就會出現。
+
+**5. 按 `⌘ + R` 執行**
+第一次可能會出現「無法打開，開發者未受信任」，這時要在手機上：
+**設定 → 一般 → VPN 與裝置管理** → 點你的 Apple ID → **信任**。
+信任完回 Xcode 再按一次 `⌘ + R`。
+
+**6. 開始測試**
+打開 App → 按「啟用相機與麥克風」→ 允許權限 → 設定秒數 → 開始倒數。
+測試項目在 `docs/DEVICE_TESTS.md`。
+
+### 免費帳號的限制
+- 裝到手機上的 App **7 天後就不能開**，要接回 Mac 再按一次 `⌘ + R` 重新安裝。
+- 同時最多只能裝 3 個自己開發的 App。
+- 第一次用線配對成功後，可以在 Xcode → Window → Devices and Simulators，對手機勾「**Connect via network**」。之後同一個 Wi-Fi 下就不用插線。
+
+哪一步卡住或跳錯誤，把訊息或截圖貼給我。
+
+
+======================================================================
+Session B（f6530a29-b2df-45fc-9efb-c7d45d35889a）— 設定 App icon
+======================================================================
+
+--- [2026-09-24 14:40:43] 使用者
+[Image #1] 把這個影像複製到現在的專案 變成 icon
+
+--- [2026-09-24 14:40:43] 使用者
+[使用者附上一張圖片，原圖未保存於 repo]
+
+--- [2026-09-24 14:41:19] AI
+這張圖已經設成 Timer Cam 的 App icon 了，不過還沒在 Xcode 裡建置確認過（這台是 Linux）。
+
+- **圖檔**：存成 `TimerCam/Assets.xcassets/AppIcon.appiconset/AppIcon.png`，1024×1024。
+- **裁切**：原圖四周有一圈黑邊，我把它裁掉，只留圓角方形的部分，再縮成 1024×1024。
+- **透明度**：已經拿掉。iOS 的 App icon 不能有透明度，不然上架 App Store 會被擋。
+- **設定**：`Contents.json` 已經指到這個檔案，專案原本就用 `AppIcon` 當圖示名稱，所以不用再改其他設定。
+
+原圖本身就畫好了圓角，所以裁完四個角還留著一點黑色。iOS 會自己套圓角遮罩，而且它的圓角比原圖大，這些黑角應該會被切掉、看不到。如果實際在手機上看邊緣怪怪的，可以改成把整張圖鋪滿、四個角不留黑色。
+
+之後在 Xcode 裡 Clean Build（⇧⌘K）再跑一次，就會看到新的圖示。我還沒幫你 commit。
+
+--- [2026-09-24 14:41:31] 使用者
+幫我 commit
+
+--- [2026-09-24 14:41:42] AI
+我沒有 commit，因為沒有東西可以 commit：icon 已經被放進 `c702edf`（"Redesign main screen as camera layout with history and settings"）這個 commit 裡了。這個 commit 不是我做的，應該是你或另一個 session 在這段時間做的。
+
+`c702edf` 裡除了 icon 的 `AppIcon.png` 和 `Contents.json`，還有你原本就在改的 `ContentView.swift`、`README.md` 和兩份 docs。現在工作目錄是乾淨的，`main` 比 `origin/main` 多 1 個 commit，還沒 push。
+
+如果你想讓 icon 自己獨立一個 commit，我可以把 `c702edf` 拆成兩個。要拆，或要 push，跟我說一聲就好。
+
+
+======================================================================
+Session C（ab0cd508-b393-4062-bfd4-c161780a47f5）— 相機式介面、英文化與字型、pbxproj 修正、本份紀錄
+======================================================================
+
+--- [2026-09-24 14:37:55] 使用者
+幫我新增歷史錄影介面在左下角 中間是相機本身 右邊是設定
+
+--- [2026-09-24 14:38:25] AI
+I'll restructure the main screen into a camera-app layout: full-screen preview, bottom bar with history (left, latest-clip thumbnail), shutter (center), settings (right).
+
+--- [2026-09-24 14:38:55] AI
+Now remove the unused `Clip`/`PrimaryButtonStyle` and adapt `PlaybackView` to be pushed inside the history sheet.
+
+--- [2026-09-24 14:39:15] AI
+No Swift toolchain on this Linux box, so I'll review the result by hand.
+
+--- [2026-09-24 14:39:32] AI
+I've rebuilt the main screen to look like a normal camera app. I haven't compiled it, because there's no Swift toolchain on this Linux machine. It needs a build in Xcode and a test on an iPhone before you can count on it.
+
+**Layout** (all in `TimerCam/Sources/ContentView.swift`):
+- **Full screen:** the camera preview fills the whole screen. A small label at the top shows the current settings ("錄影 40 秒 · 就位 3 秒").
+- **Countdown and recording:** the countdown number and "錄影中 / 秒剩餘" appear in the middle of the preview.
+- **Bottom bar:**
+  - **Left – recording history:** the button shows a thumbnail of your latest clip, or an icon if there are none yet. Tapping it opens a list of past clips with thumbnails and dates. Tap a clip to play it or save it to Photos. If there are no clips, it says 「還沒有錄影」.
+  - **Middle – camera button:** it changes with the state. It turns the camera on the first time, then shows a red circle to start the countdown and a red square to cancel the countdown or stop recording early. It shows a spinner while the camera is starting up or finishing.
+  - **Right – settings:** the gear opens the settings you had before on the main page (duration 40/60/custom, get-ready time, 3-2-1 speed) as a separate panel. If the duration isn't between 1 and 600 seconds, you can't close it with 完成 or swipe it away.
+
+**How it behaves:**
+- While the countdown or recording is running, the history and settings buttons are turned off.
+- Opening history pauses the camera, the same way playback did before. When you close it, the camera turns back on by itself if it was on.
+- After saving a video, the result message now shows inside the history screen, and the playback screen stays open instead of closing.
+
+I removed the old list of clips and the start buttons from the main screen, and deleted the code only they used. I also updated the descriptions in `README.md` and `docs/XCODE_SETUP.md`, and added a line for the history and settings buttons to `docs/DEVICE_TESTS.md`.
+
+Nothing is committed yet. Want me to commit it?
+
+--- [2026-09-24 14:41:12] 使用者
+好，幫我 commit
+
+--- [2026-09-24 14:41:18] AI
+I committed the change to `main` as `c702edf` ("Redesign main screen as camera layout with history and settings"). It includes the four files I changed, and nothing is left uncommitted.
+
+I haven't pushed it. The code still hasn't been built in Xcode or tested on an iPhone.
+
+--- [2026-09-24 14:41:52] 使用者
+直接 push
+
+--- [2026-09-24 14:42:01] AI
+I pushed `c702edf` to `main` on GitHub (`Yogurtheyork/TimerCam`). The remote `main` went from `ff62b6a` to `c702edf`.
+
+This version is still untested: it hasn't been built in Xcode or run on an iPhone.
+
+--- [2026-09-24 14:45:45] 使用者
+https://www.fontspace.com/dareva-font-f165109 我想要把 app 字體改成這個
+
+--- [2026-09-24 14:47:59] 使用者
+[Request interrupted by user for tool use]
+
+--- [2026-09-24 14:49:06] 使用者
+https://fonts.google.com/selection?preview.script=Latn 這個是可以的嗎 然後語言要有支援英文
+
+--- [2026-09-24 14:49:15] AI
+可以。Google Fonts 上的字型幾乎都是 SIL Open Font License（少數是 Apache 2.0），可以放進 iOS App，也可以把字型檔 commit 進公開 repo，只要附上它的授權檔（OFL.txt）就好。Dareva 的授權沒有允許這些。
+
+不過你貼的 `fonts.google.com/selection` 連結看不到你選了哪套字型。選取清單只存在你的瀏覽器裡，連結本身不帶字型名稱。請告訴我字型名稱（例如 Inter、Poppins、Nunito），或貼那套字型自己的頁面，像 `fonts.google.com/specimen/Poppins`。
+
+另外，「語言要支援英文」指的是哪一個？
+1. **App 介面加英文版**：iPhone 語言設成英文時整個 App 顯示英文，設成中文時顯示中文。我會把目前寫死的中文字串改成中英雙語。
+2. **字型要能顯示英文**：Google Fonts 的拉丁字型都支援英文。要注意的是，這類字型大多沒有中文字，中文還是會用系統字型顯示。
+
+如果兩個都要也可以，告訴我字型名稱後我一起處理。
+
+--- [2026-09-24 14:50:20] 使用者
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playwrite+BE+WAL+Guides&display=swap" rel="stylesheet"> app 只有英文好了
+
+--- [2026-09-24 14:50:46] AI
+The font is OFL-licensed, so it's fine to bundle and commit. Now wiring it into the Xcode project and translating the app to English.
+
+--- [2026-09-24 14:51:22] AI
+Now the font helper, registration at launch, and default font on each screen:
+
+--- [2026-09-24 14:51:34] AI
+Updating the docs to reflect the English UI and the font:
+
+--- [2026-09-24 14:51:48] AI
+The app now uses Playwrite BE WAL Guides and its interface is in English only. I haven't built it: there's no Swift toolchain on this Linux machine, so it needs to go through Xcode and an iPhone. It isn't committed yet.
+
+**Font**
+- It's under the SIL Open Font License, so it's fine to put in the app and in your public repo. The font file and its license are both in `TimerCam/Fonts/` and are bundled into the app.
+- The app loads the font when it starts, so no Info.plist change was needed.
+- All text in the app uses it, and it still scales with the iPhone's text size setting. That covers the main screen, the countdown and seconds-left numbers, History, Settings, Playback and the navigation bar titles.
+- System pop-up alerts and the permission prompts keep the iOS font, because apps can't change those.
+
+**English only**
+- Every piece of on-screen text is now English: the countdown ("Get ready 3", then 5-4-3-2-1), error messages, and the History, Settings and Playback screens.
+- The three permission prompts (camera, microphone, saving to Photos) are also in English, and the Xcode project's language is now English only.
+- I updated the README and docs to match. The docs themselves are still in Chinese.
+
+**Check this before you settle on it:** this is the **"Guides"** version of the font. It draws faint handwriting practice lines behind every letter, and at 96 pt on the countdown those lines will be very visible. If you meant just the handwriting style, the plain **Playwrite BE WAL** doesn't have the lines, and switching is only the file and the name.
+
+Want me to commit and push?
+
+--- [2026-09-24 14:52:07] 使用者
+commit 然後 push
+
+--- [2026-09-24 14:52:18] AI
+I committed the English interface and the Playwrite font as `773f320` and pushed it to `main` on GitHub. It includes the font file and its license in `TimerCam/Fonts/`.
+
+This hasn't been built in Xcode or run on an iPhone yet. When you run it, check two things:
+- **Font loads:** the text should be handwriting, not the system font.
+- **Countdown guide lines:** the "Guides" version draws practice lines behind letters, which will be very visible on the large countdown numbers. If they look distracting, I can switch to the plain Playwrite BE WAL, which has no lines.
+
+--- [2026-09-24 14:55:11] 使用者
+<貼上的內容>
+project.pbxproj 格式錯誤
+
+目前第 82–83 行，在 Products 群組的 children 陣列內，錯誤地插入了兩個 PBXFileReference 定義，而不是單純的檔案 ID。
+
+這會使專案設定格式無效。需要移除那兩個重複定義，保留已經正確建立在 PBXFileReference 區段和 Fonts 群組中的字體參照。
+</貼上的內容>
+
+--- [2026-09-24 14:55:21] AI
+That's correct. My text replacement for the TimerCam.app reference also matched the same text inside the Products group, so the font definitions got inserted there too. Removing them:
+
+--- [2026-09-24 14:55:27] AI
+The Products group is fixed and the brackets balance. I'm also checking that every font reference appears exactly where it belongs:
+
+--- [2026-09-24 14:55:36] AI
+I fixed the `project.pbxproj` error you pointed out. The two font definitions that had been pasted into the Products group are gone, and the group now lists only `TimerCam.app`.
+
+The mistake came from my earlier text replacement: it looked for the `TimerCam.app` line to insert the font definitions before it, and that line appears twice in the file. It matched the one inside the Products group too, so the definitions landed there.
+
+**Checks I ran:**
+- A parser for this project file format read it without errors.
+- Every entry listed in a group or build phase points to something that exists.
+- The font file and `OFL.txt` each appear exactly where they should: one definition, one entry in the Fonts group, and one in the list of files bundled into the app.
+
+I still haven't opened or built it in Xcode, since there's no Xcode here.
+
+The fix isn't committed yet, so the broken file is still on `main` on GitHub. Want me to commit and push it?
+
+--- [2026-09-24 15:02:15] 使用者
+請幫我整理 TimerCam 專案的 AI 開發紀錄，建立 conversation.txt。保留能取得的原始對話及重要 Prompt，按照時間整理需求、AI 建議、實作內容與遇到的問題。參考 Git Commit 記錄不同版本的變更，無法取得的歷史對話請註明缺少，不要自行編造。另外，整理各版本 App 截圖的清單，列出還需要補拍的畫面。 另外 幫我回顧開發並新增一下不同版本的分支 讓我可以展現不同版本
+
+--- [2026-09-24 15:02:37] 使用者
+請幫我整理 TimerCam 專案的 AI 開發紀錄，建立 conversation.txt。保留能取得的原始對話及重要 Prompt，按照時間整理需求、AI 建議、實作內容與遇到的問題。參考 Git Commit 記錄不同版本的變更，無法取得的歷史對話請註明缺少，不要自行編造。另外，整理各版本 App 截圖的清單，列出還需要補拍的畫面。 另外 幫我回顧開發並新增一下不同版本的分支 讓我可以展現不同版本 不需要每個 commit 都新增只要在重大更動的地方就好
+
+--- [2026-09-24 15:02:50] AI
+Earlier session transcripts exist locally. Extracting the user prompts and assistant replies from each, with timestamps:
+
+--- [2026-09-24 15:03:08] AI
+The Sep 20 conversation that created the app (`4524cf9`) doesn't show up in any transcript. Checking whether the earlier sessions carry a summary of it, or messages my filter skipped:
+
+--- [2026-09-24 15:03:15] AI
+No compaction summaries either, so the Sep 20 creation conversation is genuinely missing. One more place to look is the claude-mem database:
+
+--- [2026-09-24 15:03:24] AI
+claude-mem can't be reached (its worker isn't running), so I'll only use the transcript files. Now extracting this session's own messages with their timestamps:
+
+--- [2026-09-24 15:03:44] AI
+Now reading this session's extracted messages so the raw appendix is verbatim:
+
+--- [2026-09-24 15:04:00] AI
+Now writing `conversation.txt`: a hand-written summary and screenshot list, followed by the verbatim transcripts generated from the session files.
+
+--- [2026-09-24 15:05:02] AI
+Before generating the appendix, checking my v1 descriptions against the actual `4524cf9` contents:
+
