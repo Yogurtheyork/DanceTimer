@@ -16,7 +16,7 @@ struct ContentView: View {
 
             VStack(spacing: 0) {
                 Text("Record \(model.duration)s · Get ready \(model.preparation)s")
-                    .font(.app(.footnote))
+                    .font(.footnote.weight(.semibold))
                     .padding(.horizontal, 14).padding(.vertical, 8)
                     .background(.black.opacity(0.45), in: Capsule())
                     .padding(.top, 8)
@@ -27,7 +27,6 @@ struct ContentView: View {
             }
             .foregroundStyle(.white)
         }
-        .font(.app())
         .tint(.orange)
         .sheet(isPresented: $showHistory, onDismiss: {
             if resumeAfterHistory { Task { await model.enableCamera() } }
@@ -53,18 +52,18 @@ struct ContentView: View {
             VStack(spacing: 12) {
                 Image(systemName: "camera.fill").font(.largeTitle)
                 Text(model.phase == .preparing ? "Starting camera…" : "Tap the center button to turn on the camera and microphone")
-                Text("Timed recording with the back camera and microphone").font(.app(.caption))
+                Text("Timed recording with the back camera and microphone").font(.caption)
             }
             .padding().background(.black.opacity(0.35), in: RoundedRectangle(cornerRadius: 20))
         case .countdown:
-            Text(model.cue).font(.app(.largeTitle, size: 96))
+            Text(model.cue).font(.system(size: 96, weight: .black, design: .rounded))
                 .minimumScaleFactor(0.4).padding()
                 .shadow(radius: 8)
                 .accessibilityLabel("Countdown \(model.cue)")
         case .recording:
             VStack {
                 Label("Recording", systemImage: "record.circle.fill").foregroundStyle(.red)
-                Text("\(model.remaining)").font(.app(.largeTitle, size: 72)).monospacedDigit()
+                Text("\(model.remaining)").font(.system(size: 72, weight: .bold, design: .monospaced))
                 Text("seconds left")
             }
             .padding().background(.black.opacity(0.35), in: RoundedRectangle(cornerRadius: 20))
@@ -198,7 +197,6 @@ private struct SettingsView: View {
             .toolbar { Button("Done") { dismiss() }.disabled(!(1...600).contains(model.duration)) }
             .interactiveDismissDisabled(!(1...600).contains(model.duration))
         }
-        .font(.app())
     }
 }
 
@@ -213,14 +211,19 @@ private struct HistoryView: View {
                     ContentUnavailableView("No recordings yet", systemImage: "video.slash",
                                            description: Text("Finished recordings show up here."))
                 } else {
-                    List(model.clips, id: \.self) { url in
-                        NavigationLink(value: url) {
-                            HStack(spacing: 12) {
-                                ClipThumbnail(url: url)
-                                    .frame(width: 64, height: 64)
-                                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                                Text(clipTitle(url))
+                    List {
+                        ForEach(model.clips, id: \.self) { url in
+                            NavigationLink(value: url) {
+                                HStack(spacing: 12) {
+                                    ClipThumbnail(url: url)
+                                        .frame(width: 64, height: 64)
+                                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                                    Text(clipTitle(url))
+                                }
                             }
+                        }
+                        .onDelete { offsets in
+                            offsets.map { model.clips[$0] }.forEach(model.delete)
                         }
                     }
                 }
@@ -233,10 +236,9 @@ private struct HistoryView: View {
             .toolbar { Button("Done") { dismiss() }.disabled(model.saving) }
             .safeAreaInset(edge: .bottom) {
                 Text("Videos are kept in the app on this device.")
-                    .font(.app(.footnote)).foregroundStyle(.secondary).padding(.bottom, 8)
+                    .font(.footnote).foregroundStyle(.secondary).padding(.bottom, 8)
             }
         }
-        .font(.app())
         .interactiveDismissDisabled(model.saving)
         .messageAlert(model: model, isActive: true)
     }
@@ -291,6 +293,8 @@ private struct PlaybackView: View {
     let url: URL
     @ObservedObject var model: RecorderModel
     @State private var player: AVPlayer
+    @State private var confirmDelete = false
+    @Environment(\.dismiss) private var dismiss
 
     init(url: URL, model: RecorderModel) {
         self.url = url
@@ -305,10 +309,26 @@ private struct PlaybackView: View {
                 Task { await model.save(url) }
             }.buttonStyle(.borderedProminent).disabled(model.saving)
             Text("Photo library access is only requested when you save.")
-                .font(.app(.footnote)).foregroundStyle(.secondary)
+                .font(.footnote).foregroundStyle(.secondary)
         }.padding()
             .navigationTitle("Playback")
             .navigationBarBackButtonHidden(model.saving)
+            .toolbar {
+                Button(role: .destructive) { confirmDelete = true } label: {
+                    Image(systemName: "trash")
+                }
+                .accessibilityLabel("Delete video")
+                .disabled(model.saving)
+            }
+            .confirmationDialog("Delete this video?", isPresented: $confirmDelete, titleVisibility: .visible) {
+                Button("Delete Video", role: .destructive) {
+                    player.replaceCurrentItem(with: nil)
+                    model.delete(url)
+                    dismiss()
+                }
+            } message: {
+                Text("It will be removed from the app. Copies already saved to Photos are kept.")
+            }
             .onDisappear { player.pause() }
     }
 }

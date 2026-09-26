@@ -147,6 +147,15 @@ final class RecorderModel: ObservableObject {
         }
     }
 
+    func delete(_ url: URL) {
+        do {
+            try FileManager.default.removeItem(at: url)
+        } catch {
+            message = "Couldn't delete the video: \(error.localizedDescription)"
+        }
+        refreshClips()
+    }
+
     func save(_ url: URL) async {
         guard !saving else { return }
         saving = true

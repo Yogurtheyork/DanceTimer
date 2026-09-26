@@ -31,7 +31,7 @@ struct IntroView: View {
                     .frame(width: 36, height: 36)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                     .accessibilityHidden(true)
-                Text("Timer Cam").font(.app(.headline))
+                Text("Timer Cam").font(.headline)
             }
             .padding(.top)
 
@@ -39,7 +39,7 @@ struct IntroView: View {
                 ForEach(pages) { page in
                     VStack(spacing: 16) {
                         RemotePhoto(url: page.photo)
-                        Text(page.title).font(.app(.title2))
+                        Text(page.title).font(.title2.bold())
                         Text(page.text)
                             .multilineTextAlignment(.center)
                             .foregroundStyle(.secondary)
@@ -70,7 +70,6 @@ struct IntroView: View {
         .overlay(alignment: .topTrailing) {
             Button("Skip", action: onFinish).padding()
         }
-        .font(.app())
         .tint(.orange)
     }
 }
