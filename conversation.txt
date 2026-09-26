@@ -4,7 +4,7 @@ TimerCam AI 開發紀錄
 專案：Timer Cam（原名 Dance Timer）— 定時錄影 iOS App（SwiftUI）
 Repo：https://github.com/Yogurtheyork/TimerCam（原 repo 名稱 DanceTimer）
 AI 工具：Claude Code（CLI，Linux / WSL2 環境，無 Mac、無 Xcode、無 Swift 編譯器）
-整理日期：2026-09-24（15:05 初版；之後補上 v4 修正、v5 介紹頁與本機圖片）
+整理日期：2026-09-24 15:05 初版；09-24 補上 v4 修正、v5 介紹頁與本機圖片；09-26 補上 v6 系統字型與刪除影片
 
 時間均為台灣時間（UTC+8）。
 
@@ -14,12 +14,12 @@ AI 工具：Claude Code（CLI，Linux / WSL2 環境，無 Mac、無 Xcode、無 
 
 本紀錄只使用以下實際存在的資料，沒有補寫或推測任何對話內容：
 
-  1. Git commit 紀錄（git log），共 8 個 commit。
+  1. Git commit 紀錄（git log），共 11 個 commit。
   2. Claude Code 本機對話紀錄（~/.claude/projects/-home-york-projects-iOS/*.jsonl），共 3 個 session：
      - Session A  be8ebf13…  2026-09-23 11:35–12:06  改名 Timer Cam、repo 改名、產生 Xcode 專案、實機測試說明
      - Session B  f6530a29…  2026-09-24 14:39–14:44  設定 App icon
      - Session C  ab0cd508…  2026-09-24 14:22 起    相機式介面、英文化與字型、pbxproj 修正、本份紀錄
-  3. Session D  0783dbc8…  2026-09-24 15:40 前後  檢查圖片作業、新增 TimerCamLogo 本機圖片、更新本份紀錄
+  3. Session D  0783dbc8…  2026-09-24 15:40 起    檢查圖片作業、TimerCamLogo 本機圖片、README、改回系統字型、刪除影片、更新本份紀錄
      （由該 session 直接依自身對話內容整理，未另外擷取紀錄檔）
 
 【缺少】2026-09-20 建立 Dance Timer 的原始對話（commit 4524cf9）。
@@ -48,12 +48,14 @@ checkout 分支即可切換到該版本展示。
   version/v2-timer-cam-xcode    ff62b6a  2026-09-23 11:50  改名 Timer Cam、移除街舞字眼、加入 .xcodeproj
   version/v3-camera-ui          c702edf  2026-09-24 14:41  相機式介面：左下歷史錄影、中間錄影鍵、右下設定；App icon
   version/v4-english-font       502e67a  2026-09-24 15:13  介面全英文、Playwrite BE WAL Guides 字型（含 pbxproj 修正）
-  main（最新）                  0e3e29a  2026-09-24 15:43  第一次開啟介紹頁（網路照片）＋ TimerCamLogo 本機圖片
+  （未開分支，v5）              0e3e29a  2026-09-24 15:43  第一次開啟介紹頁（網路照片）＋ TimerCamLogo 本機圖片
+  main（最新，v6）              5efdcb6  2026-09-26 13:19  字型改回 iOS 系統字型；新增刪除影片
 
 未另外開分支的 commit：
   6f648fc  2026-09-23 11:37  只有改名與文字調整，15 分鐘後的 ff62b6a 已包含，併入 v2。
   773f320  2026-09-24 14:52  字型與英文化，但 pbxproj 有格式錯誤；v4 分支改指向修正後的 502e67a。
-  546d9ac  2026-09-24 15:33  介紹頁（網路照片），10 分鐘後的 0e3e29a 已包含，併入 v5（main）。
+  546d9ac  2026-09-24 15:33  介紹頁（網路照片），10 分鐘後的 0e3e29a 已包含，併入 v5。
+  162235d、c8683cc  2026-09-24  只更新 conversation.txt 與 README，不影響 App。
 
 注意：
   - v1 沒有 .xcodeproj，要依當時的 docs/XCODE_SETUP.md 在 Mac 上手動建立專案才能執行。
@@ -135,7 +137,7 @@ checkout 分支即可切換到該版本展示。
      限制：未經 Xcode 編譯或實機測試。
 
 
-■ v4 — 英文介面與 Google 字型（2026-09-24，Session C，commit 773f320 + 未 commit 的修正）
+■ v4 — 英文介面與 Google 字型（2026-09-24，Session C，commit 773f320、502e67a）
 
   1. 14:45  需求：「https://www.fontspace.com/dareva-font-f165109 我想要把 app 字體改成這個」
      AI 調查：下載字型與授權檔後發現
@@ -192,6 +194,28 @@ checkout 分支即可切換到該版本展示。
        - Assets.xcassets 在專案中是資料夾引用，新 imageset 自動編入，不需修改 project.pbxproj。
      限制：未經 Xcode 編譯或實機測試。
 
+  4. Session D  文件：更新本份紀錄（162235d）；README 新增「目前進度與版本」分支表、介紹頁說明、
+     Wikimedia 網路請求的隱私說明（c8683cc）。
+
+
+■ v6 — 改回系統字型、刪除影片（2026-09-26，Session D，commit 5efdcb6）
+
+  1. 需求：「幫我把字體改成原來的字體 然後在新增刪除影片的功能」
+     實作（字型）：
+       - 恢復 v3（c702edf）的系統字型寫法：倒數大字 .system(size: 96, weight: .black, design: .rounded)、
+         剩餘秒數 .system(size: 72, weight: .bold, design: .monospaced)、頂部標籤 footnote semibold。
+       - 刪除 Font.app 輔助函式、啟動時的字型註冊與導覽列字型設定；刪除 TimerCam/Fonts（字型檔與 OFL.txt），
+         並從 project.pbxproj 移除相關引用（檢查所有引用 ID 都有定義、括號成對）。字型仍保留在 version/v4-english-font。
+       - 介紹頁標題改用系統字型（頁面標題 title2 粗體）。
+     實作（刪除影片）：
+       - RecorderModel.delete(_:)：刪除 Documents/Recordings 內的檔案並重新整理列表，失敗時顯示錯誤訊息。
+       - History 列表可向左滑動刪除。
+       - 回放頁右上角垃圾桶按鈕，確認對話框「Delete this video?」後刪除並返回列表；儲存到相簿期間停用。
+       - 只刪 App 內的檔案，已存到相簿的影片不受影響。
+     文件：README 更新版本表、檔案說明、「字型與語言」段落與刪除方式；DEVICE_TESTS 新增刪除影片驗收項目。
+  2. 使用者：「commit 然後 push」→ commit 5efdcb6，推上 GitHub main。
+     限制：未經 Xcode 編譯或實機測試。
+
 
 四、各版本 App 截圖清單
 ----------------------
@@ -243,16 +267,22 @@ v4 英文與字型（version/v4-english-font）
   [ ] 4-7 Playback 與「Video saved to your photo library.」提示  實機
   [ ] 4-8 大字級（動態字級）下的主畫面與設定頁                  模擬器可
 
-v5 介紹頁與圖片（main）
+v5 介紹頁與圖片（commit 0e3e29a，未開分支；以下畫面在 main 也可拍，但字型為系統字型）
   [ ] 5-1 介紹頁第 1 頁：頂端 TimerCamLogo 本機圖片＋「Timer Cam」標題    模擬器可
   [ ] 5-2 介紹頁網路照片載入中（轉圈）                                  模擬器可（可用 Network Link Conditioner 放慢）
   [ ] 5-3 介紹頁網路照片載入成功（三頁各一張）                          模擬器可
   [ ] 5-4 網路照片載入失敗（關閉網路）與「Try again」按鈕               模擬器可
   [ ] 5-5 按 Get started／Skip 後進入相機主畫面，重開 App 不再顯示介紹頁  模擬器可
 
+v6 系統字型與刪除影片（main）
+  [ ] 6-1 主畫面與倒數大字使用系統字型（rounded 粗體）              模擬器可（倒數需實機）
+  [ ] 6-2 History 列表向左滑動出現 Delete                            實機
+  [ ] 6-3 回放頁右上角垃圾桶與「Delete this video?」確認對話框       實機
+  [ ] 6-4 刪除後列表與左下角縮圖更新；全部刪除後的空白畫面            實機
+
 展示影片
   [ ] 最新版完整流程：設定短片時長 → 倒數 → 自動開始與停止 → 回放 → 儲存到相簿（實機螢幕錄影）
-  [ ] （選擇性）v1 → v5 介面演進對照
+  [ ] （選擇性）v1 → v6 介面演進對照
 
 
 五、原始對話紀錄
@@ -797,7 +827,7 @@ Before generating the appendix, checking my v1 descriptions against the actual `
 Session D（0783dbc8-66d0-4203-abe3-eb81221ae1ed）— 檢查圖片作業、新增 TimerCamLogo 本機圖片、更新本份紀錄
 ======================================================================
 
-說明：此段由 Session D 依自身對話內容整理，不是從紀錄檔自動擷取。使用者訊息與 AI 回覆皆為原文，省略工具指令與輸出。沒有逐則時間，只能以 commit 0e3e29a（15:43）為參考。
+說明：此段由 Session D 依自身對話內容整理，不是從紀錄檔自動擷取。使用者訊息與 AI 回覆皆為原文，省略工具指令與輸出。沒有逐則時間，可參考各 commit 時間（0e3e29a 09-24 15:43、162235d 15:49、c8683cc 15:52、5efdcb6 09-26 13:19）。
 
 --- 使用者
 <貼上的內容>
@@ -881,4 +911,86 @@ The intro screen now shows the local image next to the app title. The changes ar
 好 幫我整理 conversation txt 發佈到 repo 上面
 
 --- AI
-（本則回覆即為此次更新：補上 v4 修正狀態、version/v4-english-font 分支、v5 介紹頁與本機圖片、v5 截圖清單及本段對話。）
+I updated `conversation.txt` and pushed it to GitHub `main` as commit `162235d`. One gap: the conversation for the first-launch intro page (`546d9ac`) and the later parts of the other sessions are missing, because I wasn't allowed to read those sessions' logs.
+
+**What I added:**
+- **v4 status**: the old file said the pbxproj fix wasn't committed yet. It now says it was fixed in `502e67a`, and that the `version/v4-english-font` branch points to that commit.
+- **Version table**: added the v4 branch and changed `main` to v5 (`0e3e29a`). It also notes that `773f320` and `546d9ac` don't have their own branches.
+- **New v5 section**:
+  - The first-launch intro page (`546d9ac`) is described only from its commit, since its conversation couldn't be read.
+  - The work from this conversation: checking what was missing, and adding the `TimerCamLogo` image to the intro page.
+- **Screenshot checklist**: added five v5 shots: the logo title row, a photo loading, a photo loaded, a failed load with "Try again", and the intro not showing again after reopening the app.
+- **Appendix**: added this conversation's messages word for word. My replies stay in their original English, but the log doesn't have a time for each message.
+
+**Marked as missing (not made up):** this conversation couldn't read the old session logs, so everything after 15:05 in Sessions B and C isn't in the file. That covers the pbxproj fix commit and the discussion behind the intro page. To fill that in, allow reading the logs in `~/.claude/projects/` and I'll pull those messages out and add them.
+
+**Other notes:**
+- `conversation.txt.save` is still there and wasn't committed. It's an unfinished autosave of the old `conversation.txt`: the only difference is that its last line is cut off.
+- There's no `version/v5-…` branch yet, because `main` is currently the v5 version. I can add one if you want to show v5 on its own.
+
+--- 使用者
+更新readme 到最新的進度
+
+--- AI
+I updated the README to match where the project is now, then committed and pushed it to GitHub `main` as `c8683cc`.
+
+**What changed:**
+- **Overview**: added a line saying the first launch shows a three-page intro you can skip, then goes straight to the camera screen.
+- **New "目前進度與版本" section**:
+  - A table of the four `version/*` branches plus `main`, with what each version contains and how to switch to one with `git checkout`.
+  - A link to `conversation.txt`, which has the development history and the list of screenshots still to take.
+  - What's still not done: building in Xcode, testing on an iPhone, and the screenshots and demo video.
+- **File list**:
+  - `TimerCamApp.swift` now also mentions that it registers the font and has the `Font.app` helper.
+  - `ContentView.swift` now mentions that it shows the intro page on first launch.
+  - Added the `AppIcon.appiconset` entry.
+- **Privacy and data**: the README used to say the app never goes online, which is no longer true. The intro page downloads its photos from Wikimedia Commons. No user data is sent, but their server does see normal connection info, like your IP address.
+- **App Store prep**: the App Icon is no longer listed as missing, since it's already in the app.
+
+`conversation.txt.save` is still there and wasn't committed. I only changed the README; `docs/XCODE_SETUP.md` and `docs/DEVICE_TESTS.md` weren't checked or updated. I can check those next if you want.
+
+--- 使用者
+幫我把字體改成原來的字體 然後在新增刪除影片的功能
+
+--- AI
+I switched the app back to the iOS system font and added a way to delete videos. The changes are **not yet committed**. None of it has been compiled or run, because there's no Xcode here, so it still needs a test on a Mac and an iPhone.
+
+**Font back to the original**
+- Every screen uses the system font again, the same as before the font change. The countdown numbers are rounded and bold, and the seconds-left number is fixed-width.
+- I also removed the Playwrite font setup and deleted the `TimerCam/Fonts` folder (the font file and its license). The Xcode project no longer lists either file. The font is still available on the `version/v4-english-font` branch.
+- The intro page titles also use the system font now, with the page titles in bold.
+- I checked `project.pbxproj`: every entry it points to still exists and the brackets balance.
+
+**Deleting videos**
+- **History list**: swipe a video left to delete it.
+- **Playback screen**: a trash button in the top right asks you to confirm, deletes the video, then returns you to the list.
+- Only the copy inside the app is deleted. Videos already saved to Photos are kept.
+- After a delete, the list and the bottom-left thumbnail update right away. If deleting fails, an error message appears.
+- The trash button is disabled while a video is being saved to Photos.
+
+**Docs**
+- **README**: the version table, file list and a new "字型與語言" section are updated. The old line saying the app can't delete videos now explains how to delete.
+- **`docs/DEVICE_TESTS.md`**: added a test step for deleting. "App 內影片刪除" is no longer listed as out of scope.
+
+`conversation.txt.save` wasn't touched. Do you want me to commit and push this to GitHub `main`?
+
+--- 使用者
+commit 然後 push
+
+--- AI
+The font change and the video-deletion feature are committed as `5efdcb6` and pushed to GitHub `main`. Local `main` now matches GitHub.
+
+This version still hasn't been built in Xcode or tested on an iPhone. On a Mac, check that:
+- the app builds;
+- all text uses the system font;
+- swiping left in History deletes a video;
+- the trash button on the playback screen asks for confirmation before deleting;
+- the bottom-left thumbnail updates after a delete.
+
+`conversation.txt.save` wasn't committed. `conversation.txt` doesn't include the font change or video deletion yet; I can add them if you want.
+
+--- 使用者
+幫我更新 conversation.txt
+
+--- AI
+（本則回覆即為此次更新：補上 v5 之後的 README 更新、v6 字型改回系統字型與刪除影片、v6 截圖清單及本段對話。）
